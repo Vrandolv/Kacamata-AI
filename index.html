@@ -69,7 +69,7 @@
     
     .btn { display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.2s; }
     .btn:active { transform: scale(0.98); }
-    .btn.retry { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .btn.cooldown { background: #334155; color: #94a3b8; cursor: not-allowed; }
     .btn:disabled { background: #334155; color: #94a3b8; }
     
     .privacy-notice { margin-top: 6px; font-size: 11px; color: #64748b; font-style: italic; }
@@ -100,17 +100,17 @@
       100% { left: 100%; width: 30%; }
     }
     
-    /* Notifikasi Gagal yang Halus */
+    /* Box Notifikasi Server Penuh */
     .notice-box {
       margin-top: 10px;
       display: none;
       background: rgba(245, 158, 11, 0.1);
       border: 1px solid rgba(245, 158, 11, 0.3);
-      padding: 10px;
+      padding: 12px;
       border-radius: 10px;
-      font-size: 12px;
+      font-size: 12.5px;
       color: #fbbf24;
-      line-height: 1.4;
+      line-height: 1.5;
     }
     
     /* Hasil Visual */
@@ -149,7 +149,7 @@
         * Foto tidak disimpan di server atau perangkat manapun.
       </div>
 
-      <!-- Pesan Peringatan Ramah Jika Lambat -->
+      <!-- Pesan Peringatan Ramah: Server Penuh -->
       <div id="noticeBox" class="notice-box"></div>
 
       <!-- Status Animasi Memindai -->
@@ -196,6 +196,7 @@
     const resultContainer = document.getElementById('resultContainer');
 
     let isProcessing = false;
+    let isCooldown = false;
     let stepTimer = null;
 
     window.onload = async function() {
@@ -211,8 +212,31 @@
     };
 
     function handleButtonClick() {
-      if (isProcessing) return;
+      if (isProcessing || isCooldown) return;
       captureAndAnalyze();
+    }
+
+    // Fungsi hitung mundur 30 detik
+    function startCooldownTimer(seconds = 30) {
+      isCooldown = true;
+      actionBtn.disabled = true;
+      actionBtn.classList.add("cooldown");
+
+      let remaining = seconds;
+      actionBtn.innerText = `Coba Lagi dalam ${remaining}s...`;
+
+      const interval = setInterval(() => {
+        remaining--;
+        if (remaining > 0) {
+          actionBtn.innerText = `Coba Lagi dalam ${remaining}s...`;
+        } else {
+          clearInterval(interval);
+          isCooldown = false;
+          actionBtn.disabled = false;
+          actionBtn.classList.remove("cooldown");
+          actionBtn.innerText = "Mulai Analisis Lagi";
+        }
+      }, 1000);
     }
 
     async function captureAndAnalyze() {
@@ -224,15 +248,12 @@
       
       actionBtn.disabled = true;
       actionBtn.innerText = "Memproses...";
-      actionBtn.classList.remove("retry");
 
-      // Berganti status secara alami agar terasa dinamis
       statusText.innerText = "Menyesuaikan fokus cermin...";
       stepTimer = setTimeout(() => {
         statusText.innerText = "Membaca proporsi & tone wajah...";
       }, 3000);
 
-      // Tangkap foto ringan (~45 KB)
       canvas.width = 400;
       canvas.height = 533;
       const ctx = canvas.getContext('2d');
@@ -255,9 +276,8 @@ Keluarkan HANYA format JSON valid tanpa tanda kutip markdown persis seperti ini:
   ]
 }`;
 
-      // Batas waktu pemrosesan 14 detik
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 14000);
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(_KEY)}`, {
@@ -289,7 +309,7 @@ Keluarkan HANYA format JSON valid tanpa tanda kutip markdown persis seperti ini:
         const data = await response.json();
 
         if (data.error) {
-          throw new Error("Koneksi sibuk");
+          throw new Error("Server penuh");
         }
 
         let rawText = data.candidates[0].content.parts[0].text;
@@ -328,12 +348,11 @@ Keluarkan HANYA format JSON valid tanpa tanda kutip markdown persis seperti ini:
 
       } catch (err) {
         statusBox.style.display = "none";
-        noticeBox.innerText = "Koneksi sedang lambat atau pencahayaan kurang jelas. Silakan posisikan wajah dan sentuh tombol di bawah untuk mencoba kembali.";
+        noticeBox.innerText = "Banyak pengguna yang sedang mengakses dan server sedang penuh. Mohon tunggu sejenak sebelum mencoba kembali.";
         noticeBox.style.display = "block";
         
-        actionBtn.innerText = "Ulangi Pemindaian";
-        actionBtn.classList.add("retry");
-        actionBtn.disabled = false;
+        // Kunci tombol selama 30 detik
+        startCooldownTimer(30);
       } finally {
         isProcessing = false;
         clearTimeout(stepTimer);

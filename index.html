@@ -15,20 +15,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 6px;
       margin: 4px 0 14px;
     }
     .brand-logo {
-      height: 28px;
+      height: 24px;
       width: auto;
       object-fit: contain;
+      display: block;
     }
     .brand-title {
       margin: 0;
       color: #ffffff;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.2px;
+      line-height: 1;
     }
     
     /* Layar Cermin */
@@ -55,12 +57,42 @@
     .btn:active { transform: scale(0.98); }
     .btn:disabled { background: #475569; color: #94a3b8; box-shadow: none; }
     
-    .loading { text-align: center; font-weight: bold; color: #38bdf8; margin-top: 14px; display: none; }
+    /* Progress Box 0 - 100% */
+    .progress-box {
+      display: none;
+      margin-top: 14px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 12px;
+      border-radius: 14px;
+    }
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: bold;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+      border-radius: 8px;
+      transition: width 0.15s ease-out;
+    }
     
     /* Kartu Visual Hasil */
     .result-container { margin-top: 16px; display: none; }
     
-    /* Kartu Analisis Kacamata Terpakai */
+    /* Analisis Kacamata Terpakai */
     .current-glasses-card {
       background: #0f172a;
       border-radius: 14px;
@@ -111,7 +143,7 @@
     .frame-name { font-size: 14px; font-weight: bold; color: #f8fafc; }
     .frame-desc { font-size: 12px; color: #94a3b8; margin-top: 2px; }
     
-    /* Palet Warna Bulat */
+    /* Palet Warna */
     .colors-grid { display: flex; flex-wrap: wrap; gap: 10px; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
     .color-chip { display: flex; align-items: center; background: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #475569; }
     .color-dot { width: 18px; height: 18px; border-radius: 50%; margin-right: 8px; border: 1.5px solid #ffffff; box-shadow: 0 0 4px rgba(0,0,0,0.5); flex-shrink: 0; }
@@ -134,9 +166,18 @@
 
       <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
       
-      <div id="loading" class="loading">⏳ Sedang menganalisis wajah...</div>
+      <!-- Progress Bar 0 - 100% -->
+      <div id="progressBox" class="progress-box">
+        <div class="progress-labels">
+          <span>Memproses Analisis Wajah</span>
+          <span id="progressText">0%</span>
+        </div>
+        <div class="progress-track">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
       
-      <!-- Hasil Tampilan Visual -->
+      <!-- Hasil Analisis -->
       <div id="resultContainer" class="result-container">
         <!-- Hasil Kacamata Saat Ini -->
         <div id="currentGlassesContainer"></div>
@@ -168,8 +209,12 @@
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const analyzeBtn = document.getElementById('analyzeBtn');
-    const loading = document.getElementById('loading');
+    const progressBox = document.getElementById('progressBox');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
     const resultContainer = document.getElementById('resultContainer');
+
+    let progressInterval = null;
 
     window.onload = function() {
       startLiveMirror();
@@ -187,38 +232,82 @@
       }
     }
 
-    // Generator Ikon Kacamata (SVG)
+    // Generator SVG Lengkap: Rimless, Half frame, Butterfly, Geometric, dsb.
     function getGlassesSvg(shapeType, isAvoid = false) {
       const color = isAvoid ? "#ef4444" : "#38bdf8";
       const type = (shapeType || "").toLowerCase();
       
       let svgShapes = "";
       
-      if (type.includes("round") || type.includes("bulat")) {
+      if (type.includes("rimless") || type.includes("frameless") || type.includes("tanpa bingkai")) {
+        // Rimless / Bor: Lensa garis halus putus-putus, bridge dan engsel tegas
+        svgShapes = `
+          <rect x="14" y="11" width="30" height="18" rx="4" fill="none" stroke="${color}" stroke-width="1.2" stroke-dasharray="2 2"/>
+          <path d="M44 18 L56 18" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <rect x="56" y="11" width="30" height="18" rx="4" fill="none" stroke="${color}" stroke-width="1.2" stroke-dasharray="2 2"/>
+          <line x1="8" y1="13" x2="14" y2="13" stroke="${color}" stroke-width="2.5"/>
+          <line x1="86" y1="13" x2="92" y2="13" stroke="${color}" stroke-width="2.5"/>
+        `;
+      } else if (type.includes("half") || type.includes("browline") || type.includes("clubmaster")) {
+        // Half Frame: Frame tebal atas, bawah terbuka/halus
+        svgShapes = `
+          <path d="M14 11 L44 12" fill="none" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M14 12 C14 24, 20 27, 29 27 C38 27, 44 24, 44 12" fill="none" stroke="${color}" stroke-width="1.2"/>
+          <path d="M44 14 Q50 12 56 14" fill="none" stroke="${color}" stroke-width="2"/>
+          <path d="M56 12 L86 11" fill="none" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M56 12 C56 24, 62 27, 71 27 C80 27, 86 24, 86 12" fill="none" stroke="${color}" stroke-width="1.2"/>
+        `;
+      } else if (type.includes("butterfly") || type.includes("kupu")) {
+        // Butterfly Frame: Lensa flare keluar melebar
+        svgShapes = `
+          <path d="M12 9 C22 13, 34 13, 43 15 C42 27, 28 30, 20 26 C12 21, 8 13, 12 9 Z" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M43 16 L57 16" fill="none" stroke="${color}" stroke-width="2.2"/>
+          <path d="M88 9 C78 13, 66 13, 57 15 C58 27, 72 30, 80 26 C88 21, 92 13, 88 9 Z" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round"/>
+        `;
+      } else if (type.includes("geo") || type.includes("hex") || type.includes("octa") || type.includes("segi")) {
+        // Geometric Frame: Hexagonal / Segi Banyak
+        svgShapes = `
+          <polygon points="21,11 37,11 44,19 37,27 21,27 14,19" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M44 19 L56 19" fill="none" stroke="${color}" stroke-width="2.2"/>
+          <polygon points="63,11 79,11 86,19 79,27 63,27 56,19" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round"/>
+        `;
+      } else if (type.includes("round") || type.includes("bulat")) {
+        // Round
         svgShapes = `
           <circle cx="28" cy="20" r="13" fill="none" stroke="${color}" stroke-width="2.5"/>
           <path d="M41 18 Q50 14 59 18" fill="none" stroke="${color}" stroke-width="2.5"/>
           <circle cx="72" cy="20" r="13" fill="none" stroke="${color}" stroke-width="2.5"/>
         `;
       } else if (type.includes("cat")) {
+        // Cat Eye
         svgShapes = `
           <path d="M14 24 C12 14, 25 10, 42 12 C44 20, 36 26, 26 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
           <path d="M42 16 L58 16" fill="none" stroke="${color}" stroke-width="2.5"/>
           <path d="M86 24 C88 14, 75 10, 58 12 C56 20, 64 26, 74 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
         `;
       } else if (type.includes("wayfarer")) {
+        // Wayfarer
         svgShapes = `
           <path d="M14 11 L44 14 L39 27 L18 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
           <path d="M44 15 Q50 13 56 15" fill="none" stroke="${color}" stroke-width="2.5"/>
           <path d="M56 14 L86 11 L82 26 L61 27 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
         `;
       } else if (type.includes("aviat")) {
+        // Aviator (Tear Drop + Double Bridge)
         svgShapes = `
           <path d="M14 14 C14 14, 26 12, 42 14 C43 24, 34 30, 27 30 C19 30, 14 23, 14 14 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
           <path d="M42 14 L58 14 M43 18 L57 18" fill="none" stroke="${color}" stroke-width="2"/>
           <path d="M58 14 C74 12, 86 14, 86 14 C86 23, 81 30, 73 30 C66 30, 57 24, 58 14 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
         `;
+      } else if (type.includes("oval") || type.includes("lonjong")) {
+        // Oval
+        svgShapes = `
+          <ellipse cx="28" cy="20" rx="14" ry="10" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M42 19 Q50 16 58 19" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <ellipse cx="72" cy="20" rx="14" ry="10" fill="none" stroke="${color}" stroke-width="2.5"/>
+        `;
       } else {
+        // Rectangular / Kotak Standar
         svgShapes = `
           <rect x="14" y="11" width="30" height="18" rx="3" fill="none" stroke="${color}" stroke-width="2.5"/>
           <path d="M44 18 L56 18" fill="none" stroke="${color}" stroke-width="2.5"/>
@@ -231,6 +320,33 @@
       ` : "";
 
       return `<svg viewBox="0 0 100 40">${svgShapes}${strikeThrough}</svg>`;
+    }
+
+    function setProgressBar(percent) {
+      progressBar.style.width = percent + "%";
+      progressText.innerText = Math.round(percent) + "%";
+    }
+
+    function startProgress() {
+      progressBox.style.display = "block";
+      setProgressBar(0);
+      let currentVal = 0;
+      clearInterval(progressInterval);
+      progressInterval = setInterval(() => {
+        if (currentVal < 92) {
+          currentVal += (92 - currentVal) * 0.12 + 0.5;
+          setProgressBar(currentVal);
+        }
+      }, 150);
+    }
+
+    function finishProgress(callback) {
+      clearInterval(progressInterval);
+      setProgressBar(100);
+      setTimeout(() => {
+        progressBox.style.display = "none";
+        if (callback) callback();
+      }, 350);
     }
 
     async function captureAndAnalyze() {
@@ -255,9 +371,9 @@
       const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       const base64Image = dataUrl.split(',')[1];
 
-      loading.style.display = "block";
       analyzeBtn.disabled = true;
       resultContainer.style.display = "none";
+      startProgress();
 
       const promptText = `Periksa foto wajah ini. Deteksi apakah orang tersebut sedang memakai kacamata atau tidak, dan lakukan analisis bentuk wajah serta rekomendasi frame.
 Keluarkan HANYA format JSON valid persis seperti skema ini (tanpa markdown tambahan, tanpa teks pembuka/penutup):
@@ -265,13 +381,13 @@ Keluarkan HANYA format JSON valid persis seperti skema ini (tanpa markdown tamba
   "sedang_memakai_kacamata": true,
   "evaluasi_kacamata_sekarang": {
     "skor_cocok": 85,
-    "deskripsi": "Kacamata model rectangular/wayfarer ini sangat cocok dengan proporsi wajah oblong, memberikan kesan tegas dan seimbang."
+    "deskripsi": "Kacamata yang kamu pakai saat ini sangat serasi dengan proporsi wajah."
   },
   "bentuk_wajah": "Oblong / Panjang",
   "tone_kulit": "Kuning Langsat",
   "frame_cocok": [
     {"nama": "Kotak / Rectangular", "tipe": "square", "alasan": "Menambah lebar wajah dan menyeimbangkan proporsi panjang"},
-    {"nama": "Wayfarer", "tipe": "wayfarer", "alasan": "Memberi ilusi wajah lebih tegas dan proporsional"}
+    {"nama": "Geometric Hexagon", "tipe": "geometric", "alasan": "Memberi sudut modern yang menyeimbangkan rahang"}
   ],
   "warna_frame": [
     {"nama": "Tortoise / Havana", "hex": "#703816"},
@@ -283,7 +399,7 @@ Keluarkan HANYA format JSON valid persis seperti skema ini (tanpa markdown tamba
   ]
 }
 Catatan: Jika tidak memakai kacamata, set "sedang_memakai_kacamata": false dan isi "evaluasi_kacamata_sekarang": null.
-Pilihan nilai 'tipe' frame: "square", "wayfarer", "cateye", "round", "aviator".`;
+Pilihan nilai 'tipe' frame yang didukung: "square", "wayfarer", "cateye", "round", "aviator", "rimless", "half-frame", "butterfly", "geometric", "oval".`;
 
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
@@ -312,6 +428,8 @@ Pilihan nilai 'tipe' frame: "square", "wayfarer", "cateye", "round", "aviator".`
         const data = await response.json();
 
         if (data.error) {
+          clearInterval(progressInterval);
+          progressBox.style.display = "none";
           alert("Error " + (data.error.code || "") + ": " + data.error.message);
           return;
         }
@@ -319,73 +437,76 @@ Pilihan nilai 'tipe' frame: "square", "wayfarer", "cateye", "round", "aviator".`
         const rawText = data.candidates[0].content.parts[0].text;
         const res = JSON.parse(rawText);
 
-        // Render Analisis Kacamata Saat Ini
-        const currentContainer = document.getElementById('currentGlassesContainer');
-        if (res.sedang_memakai_kacamata && res.evaluasi_kacamata_sekarang) {
-          const evalData = res.evaluasi_kacamata_sekarang;
-          currentContainer.innerHTML = `
-            <div class="current-glasses-card">
-              <div class="cg-top">
-                <span class="cg-status">👓 Kacamata Saat Ini</span>
-                <span class="cg-score-pill">Kecocokan: ${evalData.skor_cocok || 0}%</span>
-              </div>
-              <div class="cg-eval">${evalData.deskripsi || ""}</div>
-            </div>`;
-          currentContainer.style.display = "block";
-        } else {
-          currentContainer.innerHTML = "";
-          currentContainer.style.display = "none";
-        }
+        finishProgress(() => {
+          // Render Analisis Kacamata Saat Ini
+          const currentContainer = document.getElementById('currentGlassesContainer');
+          if (res.sedang_memakai_kacamata && res.evaluasi_kacamata_sekarang) {
+            const evalData = res.evaluasi_kacamata_sekarang;
+            currentContainer.innerHTML = `
+              <div class="current-glasses-card">
+                <div class="cg-top">
+                  <span class="cg-status">👓 Kacamata Saat Ini</span>
+                  <span class="cg-score-pill">Kecocokan: ${evalData.skor_cocok || 0}%</span>
+                </div>
+                <div class="cg-eval">${evalData.deskripsi || ""}</div>
+              </div>`;
+            currentContainer.style.display = "block";
+          } else {
+            currentContainer.innerHTML = "";
+            currentContainer.style.display = "none";
+          }
 
-        // Tampilkan Bentuk Wajah & Tone Kulit
-        document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
-        document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
+          // Tampilkan Bentuk Wajah & Tone Kulit
+          document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
+          document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
 
-        // Render Frame Cocok
-        let matchHtml = "";
-        (res.frame_cocok || []).forEach(f => {
-          matchHtml += `
-            <div class="frame-card">
-              <div class="frame-icon-wrap">${getGlassesSvg(f.tipe, false)}</div>
-              <div class="frame-info">
-                <div class="frame-name">${f.nama}</div>
-                <div class="frame-desc">${f.alasan}</div>
-              </div>
-            </div>`;
+          // Render Frame Cocok
+          let matchHtml = "";
+          (res.frame_cocok || []).forEach(f => {
+            matchHtml += `
+              <div class="frame-card">
+                <div class="frame-icon-wrap">${getGlassesSvg(f.tipe, false)}</div>
+                <div class="frame-info">
+                  <div class="frame-name">${f.nama}</div>
+                  <div class="frame-desc">${f.alasan}</div>
+                </div>
+              </div>`;
+          });
+          document.getElementById('matchFramesList').innerHTML = matchHtml;
+
+          // Render Palet Warna Bulat
+          let colorsHtml = "";
+          (res.warna_frame || []).forEach(c => {
+            colorsHtml += `
+              <div class="color-chip">
+                <span class="color-dot" style="background: ${c.hex || '#333'};"></span>
+                <span>${c.nama}</span>
+              </div>`;
+          });
+          document.getElementById('colorsList').innerHTML = colorsHtml;
+
+          // Render Frame Dihindari
+          let avoidHtml = "";
+          (res.frame_hindari || []).forEach(f => {
+            avoidHtml += `
+              <div class="frame-card avoid">
+                <div class="frame-icon-wrap">${getGlassesSvg(f.tipe, true)}</div>
+                <div class="frame-info">
+                  <div class="frame-name" style="color: #fca5a5;">${f.nama}</div>
+                  <div class="frame-desc">${f.alasan}</div>
+                </div>
+              </div>`;
+          });
+          document.getElementById('avoidFramesList').innerHTML = avoidHtml;
+
+          resultContainer.style.display = "block";
         });
-        document.getElementById('matchFramesList').innerHTML = matchHtml;
-
-        // Render Palet Warna Bulat
-        let colorsHtml = "";
-        (res.warna_frame || []).forEach(c => {
-          colorsHtml += `
-            <div class="color-chip">
-              <span class="color-dot" style="background: ${c.hex || '#333'};"></span>
-              <span>${c.nama}</span>
-            </div>`;
-        });
-        document.getElementById('colorsList').innerHTML = colorsHtml;
-
-        // Render Frame Dihindari
-        let avoidHtml = "";
-        (res.frame_hindari || []).forEach(f => {
-          avoidHtml += `
-            <div class="frame-card avoid">
-              <div class="frame-icon-wrap">${getGlassesSvg(f.tipe, true)}</div>
-              <div class="frame-info">
-                <div class="frame-name" style="color: #fca5a5;">${f.nama}</div>
-                <div class="frame-desc">${f.alasan}</div>
-              </div>
-            </div>`;
-        });
-        document.getElementById('avoidFramesList').innerHTML = avoidHtml;
-
-        resultContainer.style.display = "block";
       } catch (err) {
+        clearInterval(progressInterval);
+        progressBox.style.display = "none";
         console.error(err);
         alert(err.message || String(err));
       } finally {
-        loading.style.display = "none";
         analyzeBtn.disabled = false;
       }
     }

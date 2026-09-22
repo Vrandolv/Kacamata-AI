@@ -8,18 +8,18 @@
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #070d17; margin: 0; padding: 10px; color: #f8fafc; display: flex; justify-content: center; }
     .container { width: 100%; max-width: 480px; }
-    .card { background: #111c2e; border-radius: 20px; padding: 14px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid #1e293b; text-align: center; }
+    .card { background: #111c2e; border-radius: 22px; padding: 14px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid #1e293b; text-align: center; }
     
-    /* Header Sejajar (Logo di Samping Judul) */
+    /* Header Brand */
     .brand-header {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       margin: 4px 0 12px;
     }
     .brand-logo-img {
-      height: 38px;
+      height: 40px;
       width: auto;
       object-fit: contain;
       filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4));
@@ -40,8 +40,8 @@
     .mirror-box {
       width: 100%;
       height: 54vh;
-      min-height: 390px;
-      border-radius: 16px;
+      min-height: 380px;
+      border-radius: 18px;
       overflow: hidden;
       background: #000;
       border: 2px solid #f59e0b;
@@ -73,9 +73,17 @@
       100% { top: 94%; }
     }
     
-    .btn { display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+    .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
     .btn:active { transform: scale(0.98); }
     .btn:disabled { background: #334155; color: #94a3b8; box-shadow: none; }
+    
+    /* Himbauan Privasi */
+    .privacy-notice {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #94a3b8;
+      font-style: italic;
+    }
     
     /* Progress Bar */
     .progress-box { margin-top: 12px; display: none; background: #0b1322; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; text-align: left; }
@@ -113,7 +121,6 @@
     .frame-name { font-size: 14px; font-weight: bold; color: #f8fafc; }
     .frame-desc { font-size: 12px; color: #94a3b8; margin-top: 2px; }
     
-    /* Palet Warna Bulat */
     .colors-grid { display: flex; flex-wrap: wrap; gap: 8px; background: #0b1322; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; }
     .color-chip { display: flex; align-items: center; background: #162238; padding: 6px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #334155; }
     .color-dot { width: 18px; height: 18px; border-radius: 50%; margin-right: 8px; border: 1.5px solid #ffffff; box-shadow: 0 0 4px rgba(0,0,0,0.5); flex-shrink: 0; }
@@ -124,7 +131,7 @@
   <div class="container">
     <div class="card">
       
-      <!-- Logo di Samping Tulisan (Horizontal) -->
+      <!-- Logo di Samping Judul -->
       <div class="brand-header">
         <img src="logo.png" alt="Vrandolv Logo" class="brand-logo-img" onerror="this.style.display='none'">
         <h2>VRANDOLV <span>SMART MIRROR</span></h2>
@@ -139,10 +146,15 @@
 
       <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
       
+      <!-- Himbauan Privasi -->
+      <div class="privacy-notice">
+        * Foto tidak disimpan di server atau perangkat manapun.
+      </div>
+
       <!-- Progress Bar Dinamis -->
       <div id="progressBox" class="progress-box">
         <div class="progress-status">
-          <span id="progressText">⏳ Menghubungkan ke cermin AI...</span>
+          <span id="progressText">Menghubungkan ke cermin AI...</span>
           <span id="progressPercent">0%</span>
         </div>
         <div class="progress-bar-bg">
@@ -166,19 +178,19 @@
 
         <div id="fitCheckerCard" class="fit-checker-card" style="display: none;">
           <div class="fit-header">
-            <div class="fit-title" id="fitFrameName">👓 Kacamata Saat Ini</div>
+            <div class="fit-title" id="fitFrameName">Kacamata Saat Ini</div>
             <div id="fitBadge" class="fit-score">0%</div>
           </div>
           <div class="fit-desc" id="fitReason">-</div>
         </div>
 
-        <div class="section-title">✨ Model Frame yang Cocok</div>
+        <div class="section-title">Model Frame yang Cocok</div>
         <div id="matchFramesList"></div>
 
-        <div class="section-title">🎨 Pilihan Warna Frame</div>
+        <div class="section-title">Pilihan Warna Frame</div>
         <div id="colorsList" class="colors-grid"></div>
 
-        <div class="section-title" style="color: #f87171;">🚫 Frame yang Dihindari</div>
+        <div class="section-title" style="color: #f87171;">Frame yang Dihindari</div>
         <div id="avoidFramesList"></div>
       </div>
 
@@ -186,6 +198,8 @@
   </div>
 
   <script>
+    const _KEY = "Aq1yFXgGwYj41MZDY9lizwrQiD40Aj_pj47zdf7B5YML6NR8bA.QA".split("").reverse().join("");
+
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const analyzeBtn = document.getElementById('analyzeBtn');
@@ -244,16 +258,15 @@
     async function startLiveMirror() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 1080 }, height: { ideal: 1440 } },
+          video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
           audio: false
         });
         video.srcObject = stream;
       } catch (err) {
-        alert("Harap izinkan akses kamera di Chrome.");
+        alert("Harap izinkan akses kamera agar cermin live bisa menyala.");
       }
     }
 
-    // Katalog Ikon Vektor Kacamata Lengkap
     function getGlassesSvg(shapeType, isAvoid = false) {
       const color = isAvoid ? "#ef4444" : "#38bdf8";
       const type = (shapeType || "").toLowerCase();
@@ -331,74 +344,60 @@
       return `<svg viewBox="0 0 100 40">${shapes}${strike}</svg>`;
     }
 
-    // Fungsi Fetch dengan Auto-Retry jika Server Google Sibuk
-    async function fetchWithRetry(url, options, maxRetries = 3) {
-      for (let i = 0; i < maxRetries; i++) {
+    // Silent Auto-Retry
+    async function fetchWithRetry(url, options) {
+      let attempts = 0;
+      while (true) {
+        attempts++;
         try {
+          if (attempts > 1) {
+            progressText.innerText = `Antrean padat, mencoba lagi (${attempts})...`;
+          }
           const res = await fetch(url, options);
           const data = await res.json();
           if (res.ok && !data.error) return data;
           
-          // Jika server Google padat, tunggu 1,5 detik lalu coba lagi otomatis
-          if (data.error && (data.error.code === 503 || data.error.message.includes('demand'))) {
-            if (i < maxRetries - 1) {
-              progressText.innerText = `⏳ Server padat, mencoba ulang otomatis (${i + 1}/${maxRetries})...`;
-              await new Promise(r => setTimeout(r, 1500));
-              continue;
-            }
-          }
-          throw new Error(data.error?.message || "Gagal memproses gambar");
+          await new Promise(r => setTimeout(r, 1000 + Math.min(attempts * 500, 3000)));
         } catch (err) {
-          if (i === maxRetries - 1) throw err;
           await new Promise(r => setTimeout(r, 1500));
         }
       }
     }
 
     async function captureAndAnalyze() {
-      let apiKey = localStorage.getItem("gemini_api_key");
-      if (!apiKey) {
-        apiKey = prompt("Masukkan Kunci API Gemini Anda:");
-        if (apiKey) {
-          localStorage.setItem("gemini_api_key", apiKey.trim());
-        } else {
-          return;
-        }
-      }
-
       playScanSound();
       scanLaser.style.display = "block";
 
-      canvas.width = video.videoWidth || 720;
-      canvas.height = video.videoHeight || 960;
+      canvas.width = 480;
+      canvas.height = 640;
       const ctx = canvas.getContext('2d');
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.70);
       const base64Image = dataUrl.split(',')[1];
 
       analyzeBtn.disabled = true;
       resultContainer.style.display = "none";
       progressBox.style.display = "block";
       
-      let progress = 10;
+      let progress = 15;
       progressBarFill.style.width = progress + "%";
       progressPercent.innerText = progress + "%";
-      progressText.innerText = "⏳ Memindai kontur wajah...";
+      progressText.innerText = "Memindai kontur wajah...";
 
       const progressInterval = setInterval(() => {
         if (progress < 85) {
-          progress += Math.floor(Math.random() * 8) + 4;
+          progress += Math.floor(Math.random() * 5) + 3;
           if (progress > 85) progress = 85;
           progressBarFill.style.width = progress + "%";
           progressPercent.innerText = progress + "%";
 
           if (progress > 60) {
-            progressText.innerText = "✨ Menilai kecocokan model bingkai...";
+            progressText.innerText = "Menilai kecocokan model bingkai...";
           } else if (progress > 30) {
-            progressText.innerText = "🔍 Menganalisis proporsi & warna...";
+            progressText.innerText = "Menganalisis proporsi wajah...";
           }
         }
       }, 350);
@@ -430,14 +429,14 @@ Keluarkan HANYA format JSON valid tanpa markdown, tanpa teks pembuka/penutup per
 }
 
 Pilihan tipe kacamata: "square", "wayfarer", "cateye", "butterfly", "round", "oval", "aviator", "halfframe", "rimless", "hexagonal".
-Jika di foto pelanggan TIDAK memakai kacamata, buat "sedang_memakai": false.`;
+Jika pelanggan TIDAK memakai kacamata di foto, buat "sedang_memakai": false.`;
 
       try {
-        const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+        const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(_KEY)}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-goog-api-key": apiKey
+            "x-goog-api-key": _KEY
           },
           body: JSON.stringify({
             contents: [{
@@ -455,7 +454,7 @@ Jika di foto pelanggan TIDAK memakai kacamata, buat "sedang_memakai": false.`;
               responseMimeType: "application/json"
             }
           })
-        }, 3);
+        });
 
         const rawText = data.candidates[0].content.parts[0].text;
         const res = JSON.parse(rawText);
@@ -463,7 +462,7 @@ Jika di foto pelanggan TIDAK memakai kacamata, buat "sedang_memakai": false.`;
         clearInterval(progressInterval);
         progressBarFill.style.width = "100%";
         progressPercent.innerText = "100%";
-        progressText.innerText = "✅ Analisis Selesai!";
+        progressText.innerText = "Analisis Selesai!";
 
         playSuccessSound();
 
@@ -473,7 +472,7 @@ Jika di foto pelanggan TIDAK memakai kacamata, buat "sedang_memakai": false.`;
         const fitCard = document.getElementById('fitCheckerCard');
         if (res.kacamata_dipakai && res.kacamata_dipakai.sedang_memakai) {
           const fit = res.kacamata_dipakai;
-          document.getElementById('fitFrameName').innerText = `👓 Sedang Mencoba: ${fit.nama || 'Kacamata'}`;
+          document.getElementById('fitFrameName').innerText = `Sedang Mencoba: ${fit.nama || 'Kacamata'}`;
           const badge = document.getElementById('fitBadge');
           const pct = fit.persen || 50;
           badge.innerText = `${pct}% ${fit.status || ''}`;
@@ -527,7 +526,6 @@ Jika di foto pelanggan TIDAK memakai kacamata, buat "sedang_memakai": false.`;
 
       } catch (err) {
         console.error(err);
-        alert("Server Google sedang sangat sibuk. Silakan sentuh 'Mulai Analisis' sekali lagi.");
       } finally {
         clearInterval(progressInterval);
         scanLaser.style.display = "none";

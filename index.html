@@ -69,12 +69,11 @@
     
     .btn { display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.2s; }
     .btn:active { transform: scale(0.98); }
-    .btn.cooldown { background: #334155; color: #94a3b8; cursor: not-allowed; }
+    .btn.locked { background: #334155 !important; color: #94a3b8 !important; cursor: not-allowed !important; pointer-events: none !important; }
     .btn:disabled { background: #334155; color: #94a3b8; }
     
     .privacy-notice { margin-top: 6px; font-size: 11px; color: #64748b; font-style: italic; }
     
-    /* Box Status Proses */
     .status-box {
       margin-top: 12px;
       display: none;
@@ -100,7 +99,6 @@
       100% { left: 100%; width: 30%; }
     }
     
-    /* Box Notifikasi Server Penuh */
     .notice-box {
       margin-top: 10px;
       display: none;
@@ -113,7 +111,6 @@
       line-height: 1.5;
     }
     
-    /* Hasil Visual */
     .result-container { margin-top: 14px; display: none; text-align: left; }
     .tags-row { display: flex; gap: 8px; margin-bottom: 12px; }
     .tag-badge { flex: 1; background: #0b1322; padding: 10px; border-radius: 10px; border: 1px solid #1e293b; text-align: center; }
@@ -216,25 +213,26 @@
       captureAndAnalyze();
     }
 
-    // Fungsi hitung mundur 30 detik
+    // Fungsi penguncian 30 detik
     function startCooldownTimer(seconds = 30) {
       isCooldown = true;
       actionBtn.disabled = true;
-      actionBtn.classList.add("cooldown");
+      actionBtn.classList.add("locked");
 
       let remaining = seconds;
-      actionBtn.innerText = `Coba Lagi dalam ${remaining}s...`;
+      actionBtn.innerText = `Coba Lagi dalam ${remaining} detik...`;
 
       const interval = setInterval(() => {
         remaining--;
         if (remaining > 0) {
-          actionBtn.innerText = `Coba Lagi dalam ${remaining}s...`;
+          actionBtn.innerText = `Coba Lagi dalam ${remaining} detik...`;
         } else {
           clearInterval(interval);
           isCooldown = false;
           actionBtn.disabled = false;
-          actionBtn.classList.remove("cooldown");
+          actionBtn.classList.remove("locked");
           actionBtn.innerText = "Mulai Analisis Lagi";
+          noticeBox.style.display = "none";
         }
       }, 1000);
     }
@@ -348,10 +346,9 @@ Keluarkan HANYA format JSON valid tanpa tanda kutip markdown persis seperti ini:
 
       } catch (err) {
         statusBox.style.display = "none";
-        noticeBox.innerText = "Banyak pengguna yang sedang mengakses dan server sedang penuh. Mohon tunggu sejenak sebelum mencoba kembali.";
+        noticeBox.innerText = "Sedang banyak permintaan, server penuh. Mohon mencoba beberapa saat lagi.";
         noticeBox.style.display = "block";
         
-        // Kunci tombol selama 30 detik
         startCooldownTimer(30);
       } finally {
         isProcessing = false;

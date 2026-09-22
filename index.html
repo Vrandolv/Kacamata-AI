@@ -6,22 +6,26 @@
   <title>Vrandolv Smart Mirror</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #0b1120; margin: 0; padding: 12px; color: #f8fafc; display: flex; justify-content: center; }
+    body { background-color: #070d17; margin: 0; padding: 12px; color: #f8fafc; display: flex; justify-content: center; }
     .container { width: 100%; max-width: 480px; }
-    .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
+    .card { background: #111c2e; border-radius: 22px; padding: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid #1e293b; text-align: center; }
     
-    h2 { margin: 4px 0 12px; color: #38bdf8; text-align: center; font-size: 20px; letter-spacing: 0.5px; }
+    /* Header Brand VRANDOLV */
+    .brand-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 12px; }
+    .brand-logo-svg { width: 54px; height: 54px; filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.4)); margin-bottom: 6px; }
+    h2 { margin: 0; color: #f1f5f9; font-size: 19px; letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; }
+    h2 span { color: #f59e0b; }
     
     /* Layar Cermin */
     .mirror-box {
       width: 100%;
-      height: 54vh;
+      height: 52vh;
       min-height: 380px;
-      border-radius: 16px;
+      border-radius: 18px;
       overflow: hidden;
       background: #000;
-      border: 2px solid #0284c7;
-      box-shadow: 0 0 15px rgba(2, 132, 199, 0.35);
+      border: 2px solid #f59e0b;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
       position: relative;
     }
     video {
@@ -32,35 +36,45 @@
     }
     canvas { display: none; }
     
-    .btn { display: block; width: 100%; padding: 15px; background: #10b981; color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+    .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; margin-top: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
     .btn:active { transform: scale(0.98); }
-    .btn:disabled { background: #475569; color: #94a3b8; box-shadow: none; }
+    .btn:disabled { background: #334155; color: #94a3b8; box-shadow: none; }
     
-    .loading { text-align: center; font-weight: bold; color: #38bdf8; margin-top: 14px; display: none; }
+    .countdown-box { font-size: 15px; font-weight: bold; color: #38bdf8; margin-top: 14px; display: none; padding: 10px; background: rgba(56, 189, 248, 0.1); border-radius: 10px; border: 1px dashed #38bdf8; }
     
-    /* Kartu Visual Hasil */
-    .result-container { margin-top: 16px; display: none; }
+    /* Hasil Visual */
+    .result-container { margin-top: 16px; display: none; text-align: left; }
     
-    .tags-row { display: flex; gap: 8px; margin-bottom: 14px; }
-    .tag-badge { flex: 1; background: #0f172a; padding: 10px; border-radius: 12px; border: 1px solid #38bdf8; text-align: center; }
+    .tags-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .tag-badge { flex: 1; background: #0b1322; padding: 10px; border-radius: 12px; border: 1px solid #1e293b; text-align: center; }
     .tag-title { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 2px; }
-    .tag-value { font-size: 15px; font-weight: bold; color: #38bdf8; }
+    .tag-value { font-size: 15px; font-weight: bold; color: #f59e0b; }
+    
+    /* Fit Checker Box */
+    .fit-checker-card { background: #0b1322; border-radius: 14px; padding: 14px; margin-bottom: 14px; border: 1px solid #334155; }
+    .fit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .fit-title { font-size: 13px; font-weight: bold; color: #cbd5e1; }
+    .fit-score { font-size: 14px; font-weight: 800; padding: 4px 10px; border-radius: 20px; }
+    .score-high { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+    .score-med { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+    .score-low { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+    .fit-desc { font-size: 12.5px; color: #94a3b8; line-height: 1.5; }
     
     .section-title { font-size: 13px; font-weight: bold; color: #cbd5e1; margin: 14px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    .frame-card { display: flex; align-items: center; background: #0f172a; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; border: 1px solid #334155; }
-    .frame-card.avoid { border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
+    .frame-card { display: flex; align-items: center; background: #0b1322; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; border: 1px solid #1e293b; }
+    .frame-card.avoid { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.06); }
     
-    .frame-icon-wrap { width: 75px; height: 35px; flex-shrink: 0; margin-right: 14px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .frame-icon-wrap { width: 80px; height: 38px; flex-shrink: 0; margin-right: 14px; display: flex; align-items: center; justify-content: center; }
     .frame-icon-wrap svg { width: 100%; height: 100%; }
     
     .frame-info { flex: 1; }
     .frame-name { font-size: 14px; font-weight: bold; color: #f8fafc; }
     .frame-desc { font-size: 12px; color: #94a3b8; margin-top: 2px; }
     
-    /* Palet Warna Bulat */
-    .colors-grid { display: flex; flex-wrap: wrap; gap: 10px; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
-    .color-chip { display: flex; align-items: center; background: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #475569; }
+    /* Palet Warna */
+    .colors-grid { display: flex; flex-wrap: wrap; gap: 8px; background: #0b1322; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; }
+    .color-chip { display: flex; align-items: center; background: #162238; padding: 6px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #334155; }
     .color-dot { width: 18px; height: 18px; border-radius: 50%; margin-right: 8px; border: 1.5px solid #ffffff; box-shadow: 0 0 4px rgba(0,0,0,0.5); flex-shrink: 0; }
   </style>
 </head>
@@ -68,7 +82,29 @@
 
   <div class="container">
     <div class="card">
-      <h2>👓 Vrandolv Smart Mirror</h2>
+      
+      <!-- Logo Perisai Emas VRANDOLV & Judul -->
+      <div class="brand-header">
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none">
+          <defs>
+            <linearGradient id="vGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FDE047" />
+              <stop offset="50%" stop-color="#F59E0B" />
+              <stop offset="100%" stop-color="#B45309" />
+            </linearGradient>
+          </defs>
+          <!-- Perisai Emas Atas -->
+          <path d="M50 4 L88 24 L74 34 L50 18 L26 34 L12 24 Z" fill="url(#vGold)" />
+          <!-- Sayap Kiri -->
+          <path d="M14 30 L38 30 L48 70 C48 70 32 60 22 46 Z" fill="url(#vGold)" />
+          <!-- Sayap Kanan -->
+          <path d="M86 30 L62 30 L52 70 C52 70 68 60 78 46 Z" fill="url(#vGold)" />
+          <!-- Chevron Bawah (Huruf V) -->
+          <path d="M50 82 L47 70 L50 67 L53 70 Z" fill="url(#vGold)" />
+          <path d="M34 46 L50 78 L66 46 L54 46 L50 56 L46 46 Z" fill="url(#vGold)" />
+        </svg>
+        <h2>VRANDOLV <span>SMART MIRROR</span></h2>
+      </div>
 
       <!-- Layar Cermin -->
       <div class="mirror-box">
@@ -78,10 +114,13 @@
 
       <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
       
-      <div id="loading" class="loading">⏳ Sedang menganalisis wajah...</div>
+      <!-- Hitungan Mundur -->
+      <div id="countdownBox" class="countdown-box">⏳ Sedang menganalisis wajah... <span id="timerSec">4</span> detik</div>
       
-      <!-- Hasil Tampilan Visual (Vector & Palet Warna) -->
+      <!-- Hasil Analisis Visual -->
       <div id="resultContainer" class="result-container">
+        
+        <!-- Tag Ringkas Bentuk Wajah & Kulit -->
         <div class="tags-row">
           <div class="tag-badge">
             <div class="tag-title">Bentuk Wajah</div>
@@ -93,6 +132,15 @@
           </div>
         </div>
 
+        <!-- Kartu Evaluasi Kacamata yang Sedang Dipakai -->
+        <div id="fitCheckerCard" class="fit-checker-card" style="display: none;">
+          <div class="fit-header">
+            <div class="fit-title" id="fitFrameName">👓 Kacamata Saat Ini</div>
+            <div id="fitBadge" class="fit-score">0%</div>
+          </div>
+          <div class="fit-desc" id="fitReason">-</div>
+        </div>
+
         <div class="section-title">✨ Model Frame yang Cocok</div>
         <div id="matchFramesList"></div>
 
@@ -102,6 +150,7 @@
         <div class="section-title" style="color: #f87171;">🚫 Frame yang Dihindari</div>
         <div id="avoidFramesList"></div>
       </div>
+
     </div>
   </div>
 
@@ -109,7 +158,8 @@
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const analyzeBtn = document.getElementById('analyzeBtn');
-    const loading = document.getElementById('loading');
+    const countdownBox = document.getElementById('countdownBox');
+    const timerSec = document.getElementById('timerSec');
     const resultContainer = document.getElementById('resultContainer');
 
     window.onload = function() {
@@ -124,54 +174,96 @@
         });
         video.srcObject = stream;
       } catch (err) {
-        alert("Harap izinkan akses kamera di Chrome agar cermin live bisa menyala.");
+        alert("Harap izinkan akses kamera di Chrome.");
       }
     }
 
-    // Generator Ikon Kacamata (SVG)
+    // Katalog Grafis Vektor Kacamata Lengkap
     function getGlassesSvg(shapeType, isAvoid = false) {
       const color = isAvoid ? "#ef4444" : "#38bdf8";
       const type = (shapeType || "").toLowerCase();
-      
-      let svgShapes = "";
-      
+      let shapes = "";
+
       if (type.includes("round") || type.includes("bulat")) {
-        svgShapes = `
-          <circle cx="28" cy="20" r="13" fill="none" stroke="${color}" stroke-width="2.5"/>
+        // BULAT / ROUND
+        shapes = `
+          <circle cx="27" cy="20" r="14" fill="none" stroke="${color}" stroke-width="2.5"/>
           <path d="M41 18 Q50 14 59 18" fill="none" stroke="${color}" stroke-width="2.5"/>
-          <circle cx="72" cy="20" r="13" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <circle cx="73" cy="20" r="14" fill="none" stroke="${color}" stroke-width="2.5"/>
+        `;
+      } else if (type.includes("oval")) {
+        // OVAL
+        shapes = `
+          <ellipse cx="27" cy="20" rx="15" ry="11" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M42 19 Q50 16 58 19" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <ellipse cx="73" cy="20" rx="15" ry="11" fill="none" stroke="${color}" stroke-width="2.5"/>
         `;
       } else if (type.includes("cat")) {
-        svgShapes = `
-          <path d="M14 24 C12 14, 25 10, 42 12 C44 20, 36 26, 26 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
-          <path d="M42 16 L58 16" fill="none" stroke="${color}" stroke-width="2.5"/>
-          <path d="M86 24 C88 14, 75 10, 58 12 C56 20, 64 26, 74 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+        // CAT-EYE
+        shapes = `
+          <path d="M12 24 C10 13, 26 9, 43 13 C45 21, 35 27, 24 27 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M43 17 L57 17" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M88 24 C90 13, 74 9, 57 13 C55 21, 65 27, 76 27 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
         `;
-      } else if (type.includes("wayfarer")) {
-        svgShapes = `
-          <path d="M14 11 L44 14 L39 27 L18 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
-          <path d="M44 15 Q50 13 56 15" fill="none" stroke="${color}" stroke-width="2.5"/>
-          <path d="M56 14 L86 11 L82 26 L61 27 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+      } else if (type.includes("butterfly") || type.includes("kupu")) {
+        // BUTTERFLY
+        shapes = `
+          <path d="M12 10 Q28 14 42 16 Q38 32 20 30 Q10 24 12 10 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M42 17 L58 17" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M88 10 Q72 14 58 16 Q62 32 80 30 Q90 24 88 10 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
         `;
       } else if (type.includes("aviat")) {
-        svgShapes = `
-          <path d="M14 14 C14 14, 26 12, 42 14 C43 24, 34 30, 27 30 C19 30, 14 23, 14 14 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
-          <path d="M42 14 L58 14 M43 18 L57 18" fill="none" stroke="${color}" stroke-width="2"/>
-          <path d="M58 14 C74 12, 86 14, 86 14 C86 23, 81 30, 73 30 C66 30, 57 24, 58 14 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
+        // AVIATOR
+        shapes = `
+          <path d="M14 13 C14 13, 26 11, 42 13 C43 24, 34 31, 26 31 C18 31, 14 23, 14 13 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M42 13 L58 13 M43 18 L57 18" fill="none" stroke="${color}" stroke-width="2"/>
+          <path d="M58 13 C74 11, 86 13, 86 13 C86 23, 82 31, 74 31 C66 31, 57 24, 58 13 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
+        `;
+      } else if (type.includes("half") || type.includes("clubmaster")) {
+        // HALF FRAME / CLUBMASTER
+        shapes = `
+          <path d="M13 12 L43 15 L39 20 L16 19 Z" fill="${color}" stroke="${color}" stroke-width="1"/>
+          <path d="M16 19 C18 28, 36 29, 39 20" fill="none" stroke="${color}" stroke-width="1.8" stroke-dasharray="2 1"/>
+          <path d="M43 16 Q50 14 57 16" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M87 12 L57 15 L61 20 L84 19 Z" fill="${color}" stroke="${color}" stroke-width="1"/>
+          <path d="M84 19 C82 28, 64 29, 61 20" fill="none" stroke="${color}" stroke-width="1.8" stroke-dasharray="2 1"/>
+        `;
+      } else if (type.includes("rimless") || type.includes("frameless") || type.includes("tanpa")) {
+        // RIMLESS (Frame Tipis/Baut)
+        shapes = `
+          <rect x="15" y="12" width="28" height="17" rx="3" fill="none" stroke="${color}" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <circle cx="17" cy="20" r="1.5" fill="${color}"/>
+          <circle cx="41" cy="20" r="1.5" fill="${color}"/>
+          <path d="M43 20 L57 20" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <circle cx="59" cy="20" r="1.5" fill="${color}"/>
+          <circle cx="83" cy="20" r="1.5" fill="${color}"/>
+          <rect x="57" y="12" width="28" height="17" rx="3" fill="none" stroke="${color}" stroke-width="1.5" stroke-dasharray="3 2"/>
+        `;
+      } else if (type.includes("hex") || type.includes("geom")) {
+        // HEXAGONAL / GEOMETRIC
+        shapes = `
+          <polygon points="20,11 36,11 44,20 36,29 20,29 12,20" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M44 20 L56 20" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <polygon points="64,11 80,11 88,20 80,29 64,29 56,20" fill="none" stroke="${color}" stroke-width="2.5"/>
+        `;
+      } else if (type.includes("wayfarer")) {
+        // WAYFARER
+        shapes = `
+          <path d="M13 11 L43 14 L39 27 L18 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M43 15 Q50 13 57 15" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M57 14 L87 11 L82 26 L61 27 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
         `;
       } else {
-        svgShapes = `
+        // KOTAK / SQUARE / RECTANGULAR (Default)
+        shapes = `
           <rect x="14" y="11" width="30" height="18" rx="3" fill="none" stroke="${color}" stroke-width="2.5"/>
-          <path d="M44 18 L56 18" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M44 19 L56 19" fill="none" stroke="${color}" stroke-width="2.5"/>
           <rect x="56" y="11" width="30" height="18" rx="3" fill="none" stroke="${color}" stroke-width="2.5"/>
         `;
       }
 
-      const strikeThrough = isAvoid ? `
-        <line x1="8" y1="32" x2="92" y2="8" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
-      ` : "";
-
-      return `<svg viewBox="0 0 100 40">${svgShapes}${strikeThrough}</svg>`;
+      const strike = isAvoid ? `<line x1="8" y1="32" x2="92" y2="8" stroke="#ef4444" stroke-width="3.5" stroke-linecap="round"/>` : "";
+      return `<svg viewBox="0 0 100 40">${shapes}${strike}</svg>`;
     }
 
     async function captureAndAnalyze() {
@@ -196,18 +288,38 @@
       const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       const base64Image = dataUrl.split(',')[1];
 
-      loading.style.display = "block";
+      // Mulai Countdown Timer
       analyzeBtn.disabled = true;
       resultContainer.style.display = "none";
+      countdownBox.style.display = "block";
+      
+      let count = 4;
+      timerSec.innerText = count;
+      const timerInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          timerSec.innerText = count;
+        } else {
+          countdownBox.innerHTML = "⏳ Hampir selesai memproses...";
+          clearInterval(timerInterval);
+        }
+      }, 1000);
 
-      const promptText = `Analisis foto wajah ini untuk rekomendasi kacamata. 
-Keluarkan HANYA format JSON valid persis seperti ini (tanpa teks pembuka/penutup, tanpa markdown tambahan):
+      const promptText = `Analisis foto wajah pelanggan optik ini. 
+Keluarkan HANYA format JSON valid tanpa markdown, tanpa teks pembuka/penutup persis seperti skema ini:
 {
   "bentuk_wajah": "Bulat",
-  "tone_kulit": "Kuning Langsat",
+  "tone_kulit": "Sawo Matang",
+  "kacamata_dipakai": {
+    "sedang_memakai": true,
+    "nama": "Frame Bulat Full-Rim Hitam",
+    "persen": 55,
+    "status": "Kurang Cocok",
+    "alasan": "Bentuk bulat membuat pipi tampak lebih penuh. Disarankan memilih frame bersudut kotak."
+  },
   "frame_cocok": [
-    {"nama": "Kotak / Rectangular", "tipe": "square", "alasan": "Sudut tegas menyeimbangkan pipi"},
-    {"nama": "Wayfarer", "tipe": "wayfarer", "alasan": "Memberi ilusi wajah lebih tegas dan proporsional"}
+    {"nama": "Kotak / Rectangular", "tipe": "square", "alasan": "Sudut tegas menyeimbangkan kebulatan pipi"},
+    {"nama": "Wayfarer", "tipe": "wayfarer", "alasan": "Memberi ilusi wajah lebih tegas & proporsional"}
   ],
   "warna_frame": [
     {"nama": "Tortoise / Havana", "hex": "#703816"},
@@ -215,10 +327,12 @@ Keluarkan HANYA format JSON valid persis seperti ini (tanpa teks pembuka/penutup
     {"nama": "Rose Gold", "hex": "#b76e79"}
   ],
   "frame_hindari": [
-    {"nama": "Bulat Penuh (Round)", "tipe": "round", "alasan": "Membuat wajah tampak semakin bulat"}
+    {"nama": "Bulat Penuh (Round)", "tipe": "round", "alasan": "Mempertegas bentuk wajah bulat"}
   ]
 }
-Pilihan tipe kacamata yang tersedia: "square", "wayfarer", "cateye", "round", "aviator".`;
+
+Pilihan tipe kacamata yang bisa dipilih AI: "square", "wayfarer", "cateye", "butterfly", "round", "oval", "aviator", "halfframe", "rimless", "hexagonal".
+Jika di foto pelanggan TIDAK memakai kacamata, buat "sedang_memakai": false.`;
 
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
@@ -248,18 +362,34 @@ Pilihan tipe kacamata yang tersedia: "square", "wayfarer", "cateye", "round", "a
         const data = await response.json();
 
         if (data.error) {
-          alert("Server sedang sibuk. Silakan ketuk 'Mulai Analisis' sekali lagi.");
+          alert("Server sedang padat. Silakan sentuh 'Mulai Analisis' sekali lagi.");
           return;
         }
 
         const rawText = data.candidates[0].content.parts[0].text;
         const res = JSON.parse(rawText);
 
-        // Tampilkan Hasil Singkat
+        // Tampilkan Bentuk Wajah & Kulit
         document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
         document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
 
-        // Render Frame Cocok
+        // Fit Checker Kacamata yang Sedang Dipakai
+        const fitCard = document.getElementById('fitCheckerCard');
+        if (res.kacamata_dipakai && res.kacamata_dipakai.sedang_memakai) {
+          const fit = res.kacamata_dipakai;
+          document.getElementById('fitFrameName').innerText = `👓 Sedang Mencoba: ${fit.nama || 'Kacamata'}`;
+          const badge = document.getElementById('fitBadge');
+          const pct = fit.persen || 50;
+          badge.innerText = `${pct}% ${fit.status || ''}`;
+          
+          badge.className = "fit-score " + (pct >= 75 ? "score-high" : (pct >= 50 ? "score-med" : "score-low"));
+          document.getElementById('fitReason').innerText = fit.alasan || "";
+          fitCard.style.display = "block";
+        } else {
+          fitCard.style.display = "none";
+        }
+
+        // Render Frame Cocok (Icon Vektor)
         let matchHtml = "";
         (res.frame_cocok || []).forEach(f => {
           matchHtml += `
@@ -273,7 +403,7 @@ Pilihan tipe kacamata yang tersedia: "square", "wayfarer", "cateye", "round", "a
         });
         document.getElementById('matchFramesList').innerHTML = matchHtml;
 
-        // Render Palet Warna Bulat
+        // Render Bulatan Warna
         let colorsHtml = "";
         (res.warna_frame || []).forEach(c => {
           colorsHtml += `
@@ -284,7 +414,7 @@ Pilihan tipe kacamata yang tersedia: "square", "wayfarer", "cateye", "round", "a
         });
         document.getElementById('colorsList').innerHTML = colorsHtml;
 
-        // Render Frame Dihindari
+        // Render Frame Dihindari (Icon Vektor + Coretan Merah)
         let avoidHtml = "";
         (res.frame_hindari || []).forEach(f => {
           avoidHtml += `
@@ -301,9 +431,10 @@ Pilihan tipe kacamata yang tersedia: "square", "wayfarer", "cateye", "round", "a
         resultContainer.style.display = "block";
       } catch (err) {
         console.error(err);
-        alert("Gagal membaca respon AI. Silakan coba lagi.");
+        alert("Gagal membaca hasil analisis. Silakan ulangi sekali lagi.");
       } finally {
-        loading.style.display = "none";
+        clearInterval(timerInterval);
+        countdownBox.style.display = "none";
         analyzeBtn.disabled = false;
       }
     }

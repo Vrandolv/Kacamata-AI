@@ -3,356 +3,310 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VRANDOLV</title>
-
-  <!-- Library Deteksi Wajah (MediaPipe) -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
+  <title>Vrandolv Smart Mirror</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    body {
-      background-color: #0d1424;
-      color: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 16px;
-    }
-
-    .container {
-      background-color: #10192d;
-      border-radius: 20px;
-      padding: 20px;
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #0b1120; margin: 0; padding: 12px; color: #f8fafc; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 480px; }
+    .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
+    
+    h2 { margin: 4px 0 12px; color: #38bdf8; text-align: center; font-size: 20px; letter-spacing: 0.5px; }
+    
+    /* Layar Cermin */
+    .mirror-box {
       width: 100%;
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-      border: 1px solid #1e2c4a;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-      justify-content: center;
-      margin-bottom: 4px;
-    }
-
-    .logo-img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-    }
-
-    .title-box h2 {
-      font-size: 1.25rem;
-      letter-spacing: 1.5px;
-      font-weight: 800;
-      color: #38bdf8;
-    }
-
-    .camera-frame {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 4 / 5;
+      height: 54vh;
+      min-height: 380px;
       border-radius: 16px;
       overflow: hidden;
-      background-color: #000000;
+      background: #000;
       border: 2px solid #0284c7;
       box-shadow: 0 0 15px rgba(2, 132, 199, 0.35);
+      position: relative;
     }
-
     video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scaleX(-1); /* Efek Cermin */
+      transform: scaleX(-1);
     }
-
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    /* Kondisi default: Merah putus-putus */
-    #face-guide {
-      fill: none;
-      stroke: #ff3b30;
-      stroke-width: 1.5;
-      stroke-dasharray: 4, 4;
-      transition: stroke 0.2s ease, filter 0.2s ease, stroke-dasharray 0.2s ease;
-    }
-
-    /* Kondisi pas: Hijau solid + glow */
-    #face-guide.valid {
-      stroke: #10b981;
-      stroke-width: 2.2;
-      stroke-dasharray: none;
-      filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.9));
-    }
-
-    #btn-analisis {
-      width: 100%;
-      padding: 15px;
-      border-radius: 14px;
-      border: none;
-      background-color: #10b981;
-      color: white;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
-
-    #btn-analisis:active {
-      transform: scale(0.98);
-    }
-
-    #btn-analisis:disabled {
-      background-color: #334155;
-      color: #94a3b8;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
+    canvas { display: none; }
     
-    .loading {
-      text-align: center;
-      font-weight: bold;
-      color: #38bdf8;
-      font-size: 0.9rem;
-      display: none;
-    }
-
-    .result-box {
-      width: 100%;
-      padding: 16px;
-      background: #0f172a;
-      border-left: 4px solid #38bdf8;
-      border-radius: 12px;
-      line-height: 1.6;
-      font-size: 0.85rem;
-      color: #e2e8f0;
-      display: none;
-    }
-
-    .disclaimer {
-      font-size: 0.65rem;
-      color: #64748b;
-      text-align: center;
-    }
-
-    /* Canvas untuk mengambil foto secara sembunyi-sembunyi */
-    canvas {
-      display: none;
-    }
+    .btn { display: block; width: 100%; padding: 15px; background: #10b981; color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: #475569; color: #94a3b8; box-shadow: none; }
+    
+    .loading { text-align: center; font-weight: bold; color: #38bdf8; margin-top: 14px; display: none; }
+    
+    /* Kartu Visual Hasil */
+    .result-container { margin-top: 16px; display: none; }
+    
+    .tags-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tag-badge { flex: 1; background: #0f172a; padding: 10px; border-radius: 12px; border: 1px solid #38bdf8; text-align: center; }
+    .tag-title { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 2px; }
+    .tag-value { font-size: 15px; font-weight: bold; color: #38bdf8; }
+    
+    .section-title { font-size: 13px; font-weight: bold; color: #cbd5e1; margin: 14px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .frame-card { display: flex; align-items: center; background: #0f172a; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; border: 1px solid #334155; }
+    .frame-card.avoid { border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
+    
+    .frame-icon-wrap { width: 75px; height: 35px; flex-shrink: 0; margin-right: 14px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .frame-icon-wrap svg { width: 100%; height: 100%; }
+    
+    .frame-info { flex: 1; }
+    .frame-name { font-size: 14px; font-weight: bold; color: #f8fafc; }
+    .frame-desc { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    
+    /* Palet Warna Bulat */
+    .colors-grid { display: flex; flex-wrap: wrap; gap: 10px; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
+    .color-chip { display: flex; align-items: center; background: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #475569; }
+    .color-dot { width: 18px; height: 18px; border-radius: 50%; margin-right: 8px; border: 1.5px solid #ffffff; box-shadow: 0 0 4px rgba(0,0,0,0.5); flex-shrink: 0; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="header">
-      <img src="logo.png" alt="Logo" class="logo-img">
-      <div class="title-box">
-        <h2>VRANDOLV</h2>
+    <div class="card">
+      <h2>👓 Vrandolv Smart Mirror</h2>
+
+      <!-- Layar Cermin -->
+      <div class="mirror-box">
+        <video id="video" autoplay playsinline muted></video>
+      </div>
+      <canvas id="canvas"></canvas>
+
+      <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
+      
+      <div id="loading" class="loading">⏳ Sedang menganalisis wajah...</div>
+      
+      <!-- Hasil Tampilan Visual (Vector & Palet Warna) -->
+      <div id="resultContainer" class="result-container">
+        <div class="tags-row">
+          <div class="tag-badge">
+            <div class="tag-title">Bentuk Wajah</div>
+            <div id="resFaceShape" class="tag-value">-</div>
+          </div>
+          <div class="tag-badge">
+            <div class="tag-title">Tone Kulit</div>
+            <div id="resSkinTone" class="tag-value">-</div>
+          </div>
+        </div>
+
+        <div class="section-title">✨ Model Frame yang Cocok</div>
+        <div id="matchFramesList"></div>
+
+        <div class="section-title">🎨 Pilihan Warna Frame</div>
+        <div id="colorsList" class="colors-grid"></div>
+
+        <div class="section-title" style="color: #f87171;">🚫 Frame yang Dihindari</div>
+        <div id="avoidFramesList"></div>
       </div>
     </div>
-
-    <div class="camera-frame">
-      <video id="webcam" autoplay playsinline muted></video>
-      
-      <svg class="overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <!-- Bentuk oval manusiawi -->
-        <ellipse id="face-guide" cx="50" cy="50" rx="32" ry="42" />
-      </svg>
-    </div>
-    
-    <canvas id="canvas"></canvas>
-
-    <button id="btn-analisis" disabled>Mulai Analisis</button>
-    
-    <div id="loading" class="loading">⏳ Sedang menganalisis wajah & kecocokan kacamata...</div>
-    <div id="result" class="result-box"></div>
-
-    <p class="disclaimer">* Foto tidak disimpan di server atau perangkat manapun.</p>
   </div>
 
   <script>
-    const video = document.getElementById("webcam");
-    const canvas = document.getElementById("canvas");
-    const faceGuide = document.getElementById("face-guide");
-    const btnAnalisis = document.getElementById("btn-analisis");
-    const loading = document.getElementById("loading");
-    const resultBox = document.getElementById("result");
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const loading = document.getElementById('loading');
+    const resultContainer = document.getElementById('resultContainer');
 
-    // --- 1. Kalibrasi Wajah ---
-    const TARGET_CENTER_X = 0.50; 
-    const TARGET_CENTER_Y = 0.50; 
-    const MAX_CENTER_OFFSET = 0.12; 
-    const MIN_FACE_WIDTH = 0.40;    
-    const MAX_FACE_WIDTH = 0.65;    
+    window.onload = function() {
+      startLiveMirror();
+    };
 
-    function handleResults(results) {
-      if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
-        setGuideState(false);
-        return;
-      }
-
-      const landmarks = results.multiFaceLandmarks[0];
-      let minX = 1, maxX = 0, minY = 1, maxY = 0;
-      
-      for (let i = 0; i < landmarks.length; i++) {
-        const currentX = 1 - landmarks[i].x;
-        const currentY = landmarks[i].y;
-        if (currentX < minX) minX = currentX;
-        if (currentX > maxX) maxX = currentX;
-        if (currentY < minY) minY = currentY;
-        if (currentY > maxY) maxY = currentY;
-      }
-
-      const faceCenterX = (minX + maxX) / 2;
-      const faceCenterY = (minY + maxY) / 2;
-      const faceWidth = maxX - minX;
-      const centerDistance = Math.hypot(faceCenterX - TARGET_CENTER_X, faceCenterY - TARGET_CENTER_Y);
-      
-      const isCentered = centerDistance <= MAX_CENTER_OFFSET;
-      const isFullFace = faceWidth >= MIN_FACE_WIDTH && faceWidth <= MAX_FACE_WIDTH;
-
-      if (isCentered && isFullFace) {
-        setGuideState(true);
-      } else {
-        setGuideState(false);
+    async function startLiveMirror() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 1080 }, height: { ideal: 1440 } },
+          audio: false
+        });
+        video.srcObject = stream;
+      } catch (err) {
+        alert("Harap izinkan akses kamera di Chrome agar cermin live bisa menyala.");
       }
     }
 
-    function setGuideState(isValid) {
-      // Abaikan perubahan warna jika sedang loading
-      if (btnAnalisis.classList.contains("is-loading")) return;
-
-      if (isValid) {
-        faceGuide.classList.add("valid");
-        btnAnalisis.removeAttribute("disabled");
+    // Generator Ikon Kacamata (SVG)
+    function getGlassesSvg(shapeType, isAvoid = false) {
+      const color = isAvoid ? "#ef4444" : "#38bdf8";
+      const type = (shapeType || "").toLowerCase();
+      
+      let svgShapes = "";
+      
+      if (type.includes("round") || type.includes("bulat")) {
+        svgShapes = `
+          <circle cx="28" cy="20" r="13" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M41 18 Q50 14 59 18" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <circle cx="72" cy="20" r="13" fill="none" stroke="${color}" stroke-width="2.5"/>
+        `;
+      } else if (type.includes("cat")) {
+        svgShapes = `
+          <path d="M14 24 C12 14, 25 10, 42 12 C44 20, 36 26, 26 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M42 16 L58 16" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M86 24 C88 14, 75 10, 58 12 C56 20, 64 26, 74 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+        `;
+      } else if (type.includes("wayfarer")) {
+        svgShapes = `
+          <path d="M14 11 L44 14 L39 27 L18 26 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M44 15 Q50 13 56 15" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M56 14 L86 11 L82 26 L61 27 Z" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+        `;
+      } else if (type.includes("aviat")) {
+        svgShapes = `
+          <path d="M14 14 C14 14, 26 12, 42 14 C43 24, 34 30, 27 30 C19 30, 14 23, 14 14 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M42 14 L58 14 M43 18 L57 18" fill="none" stroke="${color}" stroke-width="2"/>
+          <path d="M58 14 C74 12, 86 14, 86 14 C86 23, 81 30, 73 30 C66 30, 57 24, 58 14 Z" fill="none" stroke="${color}" stroke-width="2.5"/>
+        `;
       } else {
-        faceGuide.classList.remove("valid");
-        btnAnalisis.setAttribute("disabled", "true");
+        svgShapes = `
+          <rect x="14" y="11" width="30" height="18" rx="3" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <path d="M44 18 L56 18" fill="none" stroke="${color}" stroke-width="2.5"/>
+          <rect x="56" y="11" width="30" height="18" rx="3" fill="none" stroke="${color}" stroke-width="2.5"/>
+        `;
       }
+
+      const strikeThrough = isAvoid ? `
+        <line x1="8" y1="32" x2="92" y2="8" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+      ` : "";
+
+      return `<svg viewBox="0 0 100 40">${svgShapes}${strikeThrough}</svg>`;
     }
 
-    // --- 2. Mulai Kamera & MediaPipe ---
-    const faceMesh = new FaceMesh({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-    });
-
-    faceMesh.setOptions({
-      maxNumFaces: 1,
-      refineLandmarks: false,
-      minDetectionConfidence: 0.6,
-      minTrackingConfidence: 0.6
-    });
-
-    faceMesh.onResults(handleResults);
-
-    const camera = new Camera(video, {
-      onFrame: async () => {
-        await faceMesh.send({ image: video });
-      },
-      width: 480,
-      height: 640
-    });
-
-    camera.start().catch((err) => {
-      alert("Harap izinkan akses kamera di browser.");
-    });
-
-    // --- 3. Logika Analisis AI ---
-    btnAnalisis.addEventListener("click", async () => {
-      // Cari API key dari penyimpanan memori HP
-      const apiKey = localStorage.getItem("gemini_api_key") || localStorage.getItem("googleApiKey");
-      
+    async function captureAndAnalyze() {
+      let apiKey = localStorage.getItem("gemini_api_key");
       if (!apiKey) {
-        alert("Kunci API tidak ditemukan di memori HP. Harap hubungi pengembang.");
-        return;
+        apiKey = prompt("Masukkan Kunci API Gemini Anda:");
+        if (apiKey) {
+          localStorage.setItem("gemini_api_key", apiKey.trim());
+        } else {
+          return;
+        }
       }
 
-      // Kunci tampilan UI
-      btnAnalisis.classList.add("is-loading");
-      btnAnalisis.disabled = true;
-      faceGuide.classList.add("valid");
-      loading.style.display = "block";
-      resultBox.style.display = "none";
-
-      // Ambil gambar dari video ke canvas
+      // Ambil frame cermin
       canvas.width = video.videoWidth || 720;
       canvas.height = video.videoHeight || 960;
       const ctx = canvas.getContext('2d');
       ctx.translate(canvas.width, 0);
-      ctx.scale(-1, 1); // Mirror gambar hasil jepretan agar sesuai layar
+      ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       
       const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       const base64Image = dataUrl.split(',')[1];
 
-      const promptText = `Bertindaklah sebagai konsultan optik profesional dan ahli gaya kacamata dari Vrandolv Eyewear. Analisis wajah pelanggan pada foto ini secara santun, percaya diri, dan berikan poin-poin berikut:
+      loading.style.display = "block";
+      analyzeBtn.disabled = true;
+      resultContainer.style.display = "none";
 
-1. **Bentuk Wajah**: Tentukan bentuk wajahnya (Bulat, Kotak, Oval, Hati, Lonjong) dan jelaskan secara singkat proporsi rahangnya.
-2. **Skin Tone & Undertone**: Sebutkan warna kulit (Sawo Matang, Kuning Langsat, dsb) serta undertone-nya (Warm/Cool/Neutral).
-3. **Model Frame yang Cocok**: Rekomendasikan 2 bentuk kacamata yang paling seimbang untuk bentuk wajah ini.
-4. **Warna Frame yang Disarankan**: Berikan pilihan warna bingkai yang membuat warna kulit tampak cerah berseri.
-5. **Frame yang Harus Dihindari**: Sebutkan model frame yang sebaiknya dihindari.
-6. **Status Kacamata**: Jika pelanggan SUDAH memakai kacamata pada foto ini, beri penilaian jujur: Apakah kacamata tersebut sudah cocok atau belum, dan apa sarannya.`;
+      const promptText = `Analisis foto wajah ini untuk rekomendasi kacamata. 
+Keluarkan HANYA format JSON valid persis seperti ini (tanpa teks pembuka/penutup, tanpa markdown tambahan):
+{
+  "bentuk_wajah": "Bulat",
+  "tone_kulit": "Kuning Langsat",
+  "frame_cocok": [
+    {"nama": "Kotak / Rectangular", "tipe": "square", "alasan": "Sudut tegas menyeimbangkan pipi"},
+    {"nama": "Wayfarer", "tipe": "wayfarer", "alasan": "Memberi ilusi wajah lebih tegas dan proporsional"}
+  ],
+  "warna_frame": [
+    {"nama": "Tortoise / Havana", "hex": "#703816"},
+    {"nama": "Hitam Matte", "hex": "#222222"},
+    {"nama": "Rose Gold", "hex": "#b76e79"}
+  ],
+  "frame_hindari": [
+    {"nama": "Bulat Penuh (Round)", "tipe": "round", "alasan": "Membuat wajah tampak semakin bulat"}
+  ]
+}
+Pilihan tipe kacamata yang tersedia: "square", "wayfarer", "cateye", "round", "aviator".`;
 
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey
           },
           body: JSON.stringify({
             contents: [{
               parts: [
                 { text: promptText },
-                { inlineData: { mimeType: "image/jpeg", data: base64Image } }
+                {
+                  inlineData: {
+                    mimeType: "image/jpeg",
+                    data: base64Image
+                  }
+                }
               ]
-            }]
+            }],
+            generationConfig: {
+              responseMimeType: "application/json"
+            }
           })
         });
 
         const data = await response.json();
 
         if (data.error) {
-          resultBox.innerHTML = `<strong>Pesan Google:</strong> ${data.error.message || JSON.stringify(data.error)}`;
-        } else if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-          let text = data.candidates[0].content.parts[0].text;
-          text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-          resultBox.innerHTML = text.replace(/\n/g, "<br>");
-        } else {
-          resultBox.innerHTML = "Wajah tidak terbaca. Pastikan posisi wajah tepat menghadap cermin.";
+          alert("Server sedang sibuk. Silakan ketuk 'Mulai Analisis' sekali lagi.");
+          return;
         }
+
+        const rawText = data.candidates[0].content.parts[0].text;
+        const res = JSON.parse(rawText);
+
+        // Tampilkan Hasil Singkat
+        document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
+        document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
+
+        // Render Frame Cocok
+        let matchHtml = "";
+        (res.frame_cocok || []).forEach(f => {
+          matchHtml += `
+            <div class="frame-card">
+              <div class="frame-icon-wrap">${getGlassesSvg(f.tipe, false)}</div>
+              <div class="frame-info">
+                <div class="frame-name">${f.nama}</div>
+                <div class="frame-desc">${f.alasan}</div>
+              </div>
+            </div>`;
+        });
+        document.getElementById('matchFramesList').innerHTML = matchHtml;
+
+        // Render Palet Warna Bulat
+        let colorsHtml = "";
+        (res.warna_frame || []).forEach(c => {
+          colorsHtml += `
+            <div class="color-chip">
+              <span class="color-dot" style="background: ${c.hex || '#333'};"></span>
+              <span>${c.nama}</span>
+            </div>`;
+        });
+        document.getElementById('colorsList').innerHTML = colorsHtml;
+
+        // Render Frame Dihindari
+        let avoidHtml = "";
+        (res.frame_hindari || []).forEach(f => {
+          avoidHtml += `
+            <div class="frame-card avoid">
+              <div class="frame-icon-wrap">${getGlassesSvg(f.tipe, true)}</div>
+              <div class="frame-info">
+                <div class="frame-name" style="color: #fca5a5;">${f.nama}</div>
+                <div class="frame-desc">${f.alasan}</div>
+              </div>
+            </div>`;
+        });
+        document.getElementById('avoidFramesList').innerHTML = avoidHtml;
+
+        resultContainer.style.display = "block";
       } catch (err) {
-        resultBox.innerHTML = "Kesalahan koneksi: " + err.message;
+        console.error(err);
+        alert("Gagal membaca respon AI. Silakan coba lagi.");
       } finally {
         loading.style.display = "none";
-        resultBox.style.display = "block";
-        btnAnalisis.classList.remove("is-loading");
-        btnAnalisis.disabled = false;
+        analyzeBtn.disabled = false;
       }
-    });
+    }
   </script>
 </body>
 </html>

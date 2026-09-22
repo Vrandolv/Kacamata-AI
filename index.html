@@ -106,38 +106,6 @@
       filter: drop-shadow(0 0 10px rgba(0, 230, 118, 0.9));
     }
 
-    /* Styling Box API Key */
-    .api-key-box {
-      width: 100%;
-      display: flex;
-      gap: 8px;
-    }
-
-    #api-key-input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #1e2c4a;
-      background-color: #0b1325;
-      color: #fff;
-      font-size: 0.85rem;
-    }
-
-    #btn-save-key {
-      padding: 10px 15px;
-      border-radius: 8px;
-      border: none;
-      background-color: #f5a623;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    #btn-save-key:active {
-      opacity: 0.8;
-    }
-
     #btn-analisis {
       width: 100%;
       padding: 14px;
@@ -155,6 +123,12 @@
       background-color: #1e293b;
       color: #64748b;
       cursor: not-allowed;
+    }
+    
+    /* Efek visual saat proses berjalan */
+    #btn-analisis.loading {
+      background-color: #f5a623;
+      cursor: progress;
     }
 
     .disclaimer {
@@ -178,16 +152,10 @@
     <div class="camera-frame">
       <video id="webcam" autoplay playsinline muted></video>
       
-      <!-- Oval panduan wajah -->
+      <!-- Bentuk oval sudah dirampingkan agar lebih natural seperti wajah -->
       <svg class="overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <ellipse id="face-guide" cx="50" cy="50" rx="30" ry="38" />
+        <ellipse id="face-guide" cx="50" cy="50" rx="23" ry="36" />
       </svg>
-    </div>
-
-    <!-- Box input API Key dengan nilai dikosongkan agar lolos GitHub Secret Scanning -->
-    <div class="api-key-box">
-      <input type="password" id="api-key-input" value="" placeholder="Masukkan Token OAuth di sini...">
-      <button id="btn-save-key">Simpan</button>
     </div>
 
     <button id="btn-analisis" disabled>Mulai Analisis</button>
@@ -198,31 +166,13 @@
     const video = document.getElementById("webcam");
     const faceGuide = document.getElementById("face-guide");
     const btnAnalisis = document.getElementById("btn-analisis");
-    const apiKeyInput = document.getElementById("api-key-input");
-    const btnSaveKey = document.getElementById("btn-save-key");
 
-    // --- Logika API Key (Terpusat di LocalStorage) ---
-    const savedApiKey = localStorage.getItem("googleApiKey");
-    if (savedApiKey) {
-      apiKeyInput.value = savedApiKey;
-    }
-
-    btnSaveKey.addEventListener("click", () => {
-      const key = apiKeyInput.value.trim();
-      if (key) {
-        localStorage.setItem("googleApiKey", key);
-        alert("API Key berhasil disimpan dengan aman di memori HP!");
-      } else {
-        alert("API Key tidak boleh kosong.");
-      }
-    });
-
-    // --- Logika Parameter Titik Tengah (Center) ---
-    const TARGET_CENTER_X = 0.50; // Titik tengah X frame
-    const TARGET_CENTER_Y = 0.50; // Titik tengah Y frame
-    const MAX_CENTER_OFFSET = 0.08; // Maksimal geser titik tengah 8%
-    const MIN_FACE_WIDTH = 0.40;   // Wajah minimal mengisi 40% lebar frame
-    const MAX_FACE_WIDTH = 0.75;   // Wajah maksimal mengisi 75% lebar frame
+    // --- Kalibrasi Baru: Mengikuti ukuran oval yang dirampingkan ---
+    const TARGET_CENTER_X = 0.50; 
+    const TARGET_CENTER_Y = 0.50; 
+    const MAX_CENTER_OFFSET = 0.10; // Toleransi geser 10%
+    const MIN_FACE_WIDTH = 0.35;    // Minimal wajah mengisi 35% lebar frame
+    const MAX_FACE_WIDTH = 0.55;    // Maksimal wajah mengisi 55% lebar frame (jangan terlalu dekat)
 
     function handleResults(results) {
       if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
@@ -243,15 +193,12 @@
         if (currentY > maxY) maxY = currentY;
       }
 
-      // Hitung koordinat titik tengah wajah aktual
       const faceCenterX = (minX + maxX) / 2;
       const faceCenterY = (minY + maxY) / 2;
       const faceWidth = maxX - minX;
 
-      // Kalkulasi jarak dari titik tengah wajah ke titik tengah frame
       const centerDistance = Math.hypot(faceCenterX - TARGET_CENTER_X, faceCenterY - TARGET_CENTER_Y);
-
-      // Verifikasi presisi
+      
       const isCentered = centerDistance <= MAX_CENTER_OFFSET;
       const isFullFace = faceWidth >= MIN_FACE_WIDTH && faceWidth <= MAX_FACE_WIDTH;
 
@@ -263,6 +210,9 @@
     }
 
     function setGuideState(isValid) {
+      // Abaikan perubahan warna garis jika sedang memproses
+      if (btnAnalisis.classList.contains("loading")) return;
+
       if (isValid) {
         faceGuide.classList.add("valid");
         btnAnalisis.removeAttribute("disabled");
@@ -272,7 +222,6 @@
       }
     }
 
-    // Inisialisasi MediaPipe FaceMesh
     const faceMesh = new FaceMesh({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
     });
@@ -298,13 +247,17 @@
       console.error("Akses kamera ditolak atau gagal:", err);
     });
 
+    // --- Langsung Proses Tanpa Pop-up ---
     btnAnalisis.addEventListener("click", () => {
-      const token = localStorage.getItem("googleApiKey");
-      if (!token) {
-        alert("Harap masukkan dan simpan Token OAuth terlebih dahulu.");
-        return;
-      }
-      alert("Wajah terverifikasi di tengah. Memulai analisis dengan Token yang tersimpan.");
+      // Tombol berubah teks dan masuk mode loading
+      btnAnalisis.innerText = "Menganalisis Wajah...";
+      btnAnalisis.classList.add("loading");
+      btnAnalisis.setAttribute("disabled", "true");
+      faceGuide.classList.add("valid"); // Tahan garis tetap hijau
+
+      // Masukkan logika atau kode API untuk mengirim data di bawah sini
+      // ...
+      
     });
   </script>
 </body>

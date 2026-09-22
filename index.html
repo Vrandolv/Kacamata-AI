@@ -10,17 +10,17 @@
     .container { width: 100%; max-width: 480px; }
     .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
     
-    /* Header Brand Rapat */
+    /* Header Brand Rapat & Proporsional */
     .brand-header {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       width: 100%;
-      gap: 4px;
+      gap: 3px;
       margin: 4px 0 14px;
     }
     .brand-logo {
-      height: 22px;
+      height: 28px;
       width: auto;
       object-fit: contain;
       margin: 0;
@@ -31,9 +31,9 @@
       margin: 0;
       padding: 0;
       color: #ffffff;
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: 0px;
+      letter-spacing: -0.2px;
       line-height: 1;
       display: inline-block;
     }
@@ -104,7 +104,7 @@
       height: 100%;
       background: linear-gradient(90deg, #0284c7, #38bdf8);
       border-radius: 8px;
-      transition: width 0.15s ease-out;
+      transition: width 0.2s ease-out;
     }
     
     .result-container { margin-top: 16px; display: none; }
@@ -169,12 +169,11 @@
       height: 100%;
       object-fit: cover;
     }
-    .tryon-glasses-img {
+    .tryon-glasses-front {
       position: absolute;
       transform-origin: center center;
       pointer-events: none;
-      object-fit: contain;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.65));
+      filter: drop-shadow(0 7px 12px rgba(0,0,0,0.85));
     }
     
     .tryon-details {
@@ -196,10 +195,10 @@
       line-height: 1.4;
     }
     
-    /* Palet Warna */
-    .colors-grid { display: flex; flex-wrap: wrap; gap: 10px; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
-    .color-chip { display: flex; align-items: center; background: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #475569; }
-    .color-dot { width: 18px; height: 18px; border-radius: 50%; margin-right: 8px; border: 1.5px solid #ffffff; box-shadow: 0 0 4px rgba(0,0,0,0.5); flex-shrink: 0; }
+    /* Palet Warna Lengkap */
+    .colors-grid { display: flex; flex-wrap: wrap; gap: 8px; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
+    .color-chip { display: flex; align-items: center; background: #1e293b; padding: 6px 10px; border-radius: 20px; font-size: 12px; border: 1px solid #475569; }
+    .color-dot { width: 16px; height: 16px; border-radius: 50%; margin-right: 6px; border: 1px solid #64748b; box-shadow: 0 0 3px rgba(0,0,0,0.5); flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -219,7 +218,7 @@
 
       <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
       
-      <!-- Progress Bar Halus Bertahap -->
+      <!-- Progress Bar Halus & Teratur -->
       <div id="progressBox" class="progress-box">
         <div class="progress-labels">
           <span id="progressText" class="progress-text">Mengidentifikasi wajah...</span>
@@ -249,7 +248,7 @@
         <div class="section-title">✨ Frame Cocok (Geser ke Kanan ➔)</div>
         <div id="matchFramesSlider" class="carousel-slider"></div>
 
-        <div class="section-title">🎨 Pilihan Warna Frame</div>
+        <div class="section-title">🎨 Rekomendasi Warna Frame</div>
         <div id="colorsList" class="colors-grid"></div>
 
         <div class="section-title" style="color: #f87171;">🚫 Frame Dihindari (Geser ke Kanan ➔)</div>
@@ -272,28 +271,6 @@
     let currentVal = 0;
     let capturedPhotoUrl = "";
 
-    // Kumpulan Aset Gambar Kacamata Real Transparan
-    const realGlassesMap = {
-      "square": "https://images.squarespace-cdn.com/content/v1/59306b6bb8a79b9409868779/1594917540263-L9G73J8ZVRR0XF8L8N8C/Glasses-PNG-Cutout.png",
-      "wayfarer": "https://www.pngall.com/wp-content/uploads/2016/05/Glasses-Free-Download-PNG.png",
-      "round": "https://www.pngall.com/wp-content/uploads/2016/05/Glasses-PNG-File.png",
-      "aviator": "https://www.pngall.com/wp-content/uploads/2016/05/Sun-Glasses-PNG-Picture.png",
-      "cateye": "https://www.pngall.com/wp-content/uploads/2016/05/Eyeglasses-PNG-Image.png",
-      "geometric": "https://www.pngall.com/wp-content/uploads/2016/05/Glasses-PNG-Clipart.png",
-      "rimless": "https://www.pngall.com/wp-content/uploads/2016/05/Glasses-PNG-HD.png",
-      "half-frame": "https://www.pngall.com/wp-content/uploads/2016/05/Glasses-PNG-Image.png",
-      "butterfly": "https://www.pngall.com/wp-content/uploads/2016/05/Glasses-Download-PNG.png",
-      "oval": "https://www.pngall.com/wp-content/uploads/2016/05/Glasses-PNG-Picture.png"
-    };
-
-    function getRealGlassesUrl(type) {
-      const key = (type || "").toLowerCase();
-      for (const [k, url] of Object.entries(realGlassesMap)) {
-        if (key.includes(k)) return url;
-      }
-      return realGlassesMap["square"];
-    }
-
     window.onload = function() {
       startLiveMirror();
     };
@@ -310,20 +287,105 @@
       }
     }
 
+    // Generator Kacamata Bagian Depan Saja (Real Front Frame, Tanpa Tungkai Samping)
+    function renderFrontFrameOnly(type, isAvoid = false) {
+      const strokeCol = isAvoid ? "#dc2626" : "#0f172a";
+      const fillCol = isAvoid ? "rgba(220, 38, 38, 0.12)" : "rgba(255, 255, 255, 0.08)";
+      const highlight = isAvoid ? "#f87171" : "#e2e8f0";
+      const t = (type || "").toLowerCase();
+
+      let frameShapes = "";
+
+      if (t.includes("rimless") || t.includes("frameless") || t.includes("bor")) {
+        // Rimless: Hanya lensa bor bening beraksen baut + bridge jembatan
+        frameShapes = `
+          <rect x="14" y="10" width="31" height="20" rx="3" fill="${fillCol}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 1"/>
+          <rect x="55" y="10" width="31" height="20" rx="3" fill="${fillCol}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 1"/>
+          <path d="M45 17 Q50 14 55 17" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="17" cy="13" r="1.2" fill="#cbd5e1"/>
+          <circle cx="83" cy="13" r="1.2" fill="#cbd5e1"/>
+        `;
+      } else if (t.includes("half") || t.includes("browline")) {
+        // Half-frame: Alis tebal, bagian bawah senur halus
+        frameShapes = `
+          <path d="M11 11 Q28 8 45 12" fill="none" stroke="${strokeCol}" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M12 12 C12 26, 20 29, 28 29 C36 29, 44 26, 44 12" fill="${fillCol}" stroke="#64748b" stroke-width="1"/>
+          <path d="M45 15 Q50 12 55 15" fill="none" stroke="${strokeCol}" stroke-width="3"/>
+          <path d="M55 12 Q72 8 89 11" fill="none" stroke="${strokeCol}" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M56 12 C56 26, 64 29, 72 29 C80 29, 88 26, 88 12" fill="${fillCol}" stroke="#64748b" stroke-width="1"/>
+        `;
+      } else if (t.includes("round") || t.includes("bulat")) {
+        // Bulat / Panto depan tebal
+        frameShapes = `
+          <circle cx="28" cy="20" r="14" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
+          <path d="M42 18 Q50 14 58 18" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="72" cy="20" r="14" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
+        `;
+      } else if (t.includes("aviat")) {
+        // Aviator: Teardrop tebal ganda
+        frameShapes = `
+          <path d="M12 13 C12 13, 26 10, 43 13 C44 25, 34 31, 26 31 C17 31, 12 24, 12 13 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="2.5"/>
+          <path d="M43 14 L57 14 M44 18 L56 18" fill="none" stroke="${strokeCol}" stroke-width="2"/>
+          <path d="M57 13 C74 10, 88 13, 88 13 C88 24, 83 31, 74 31 C66 31, 56 25, 57 13 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="2.5"/>
+        `;
+      } else if (t.includes("geo") || t.includes("hex") || t.includes("segi")) {
+        // Geometric Hexagon depan
+        frameShapes = `
+          <polygon points="21,10 36,10 44,19 36,28 21,28 13,19" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.5" stroke-linejoin="round"/>
+          <path d="M44 18 L56 18" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
+          <polygon points="64,10 79,10 87,19 79,28 64,28 56,19" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.5" stroke-linejoin="round"/>
+        `;
+      } else if (t.includes("cat")) {
+        // Cat-eye bersudut lancip atas
+        frameShapes = `
+          <path d="M11 20 C10 10, 24 8, 43 11 C45 20, 36 27, 26 27 C15 27, 11 24, 11 20 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8" stroke-linejoin="round"/>
+          <path d="M43 14 L57 14" fill="none" stroke="${strokeCol}" stroke-width="3.2" stroke-linecap="round"/>
+          <path d="M89 20 C90 10, 76 8, 57 11 C55 20, 64 27, 74 27 C85 27, 89 24, 89 20 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8" stroke-linejoin="round"/>
+        `;
+      } else if (t.includes("wayfarer")) {
+        // Wayfarer trapezoid tebal
+        frameShapes = `
+          <path d="M12 10 L44 13 L39 28 L17 27 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M44 14 Q50 12 56 14" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M56 13 L88 10 L83 27 L61 28 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="4" stroke-linejoin="round"/>
+        `;
+      } else {
+        // Kotak / Persegi Panjang / Rectangular depan
+        frameShapes = `
+          <rect x="12" y="10" width="32" height="19" rx="3.5" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
+          <path d="M44 17 L56 17" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
+          <rect x="56" y="10" width="32" height="19" rx="3.5" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
+        `;
+      }
+
+      // Kilauan refleksi kaca di kedua lensa
+      const glare = `
+        <line x1="18" y1="13" x2="23" y2="24" stroke="${highlight}" stroke-width="1.2" opacity="0.45" stroke-linecap="round"/>
+        <line x1="62" y1="13" x2="67" y2="24" stroke="${highlight}" stroke-width="1.2" opacity="0.45" stroke-linecap="round"/>
+      `;
+
+      return `
+        <svg viewBox="0 0 100 40" style="width:100%; height:100%; display:block;" xmlns="http://www.w3.org/2000/svg">
+          ${frameShapes}
+          ${glare}
+        </svg>
+      `;
+    }
+
     function setProgressBar(percent) {
       progressBar.style.width = percent + "%";
       progressPercent.innerText = Math.round(percent) + "%";
 
-      if (percent < 25) {
-        progressText.innerText = "Mengidentifikasi kontur wajah...";
-      } else if (percent < 50) {
-        progressText.innerText = "Mendeteksi proporsi mata dan hidung...";
-      } else if (percent < 75) {
-        progressText.innerText = "Mencocokkan geometri frame...";
-      } else if (percent < 95) {
-        progressText.innerText = "Memasang fitting kacamata realistis...";
+      if (percent < 20) {
+        progressText.innerText = "Memeriksa pencahayaan & posisi wajah...";
+      } else if (percent < 45) {
+        progressText.innerText = "Mengidentifikasi geometri & kontur rahang...";
+      } else if (percent < 70) {
+        progressText.innerText = "Menghitung jarak pupil & fitting hidung...";
+      } else if (percent < 90) {
+        progressText.innerText = "Mencocokkan proporsi frame tampak depan...";
       } else {
-        progressText.innerText = "Menyusun rekomendasi akhir...";
+        progressText.innerText = "Menyelesaikan kurasi rekomendasi...";
       }
     }
 
@@ -333,20 +395,20 @@
       setProgressBar(0);
       clearInterval(progressInterval);
       
-      // Progres naik teratur dan konstan secara bertahap
+      // Progres perlahan & teratur (tidak langsung loncat ke 90%)
       progressInterval = setInterval(() => {
-        if (currentVal < 90) {
-          currentVal += 1.2;
+        if (currentVal < 88) {
+          currentVal += 0.55;
           setProgressBar(currentVal);
         }
-      }, 100);
+      }, 90);
     }
 
     function finishProgress(callback) {
       clearInterval(progressInterval);
       const finishTimer = setInterval(() => {
         if (currentVal < 100) {
-          currentVal += 2.5;
+          currentVal += 1.2;
           setProgressBar(Math.min(100, currentVal));
         } else {
           clearInterval(finishTimer);
@@ -355,11 +417,11 @@
             if (callback) callback();
           }, 350);
         }
-      }, 30);
+      }, 35);
     }
 
-    // Render Kartu Try-On Menggunakan Aset Kacamata Real
-    function createRealTryonCard(frame, photoUrl, eyeData, isAvoid = false) {
+    // Render Kartu Try-On Depan Proporsional
+    function createTryonCard(frame, photoUrl, eyeData, isAvoid = false) {
       const lx = eyeData?.kiri?.[0] ?? 42;
       const ly = eyeData?.kiri?.[1] ?? 42;
       const rx = eyeData?.kanan?.[0] ?? 58;
@@ -370,20 +432,23 @@
       const centerX = (lx + rx) / 2;
       const centerY = (ly + ry) / 2;
 
-      // Rasio ukuran kacamata real proporsional terhadap jarak pupil
-      const frameWidthPercent = Math.max(50, Math.min(eyeDistance * 2.75, 82));
-      const glassesImgSrc = getRealGlassesUrl(frame.tipe);
+      // Rasio kacamata tampak depan pas di lebar pelipis
+      const frameWidthPercent = Math.max(54, Math.min(eyeDistance * 2.85, 84));
+      const frameHeightPercent = frameWidthPercent * 0.42;
 
       return `
         <div class="tryon-card ${isAvoid ? 'avoid' : ''}">
           <div class="tryon-image-wrap">
             <img src="${photoUrl}" class="face-shot" alt="Wajah">
-            <img src="${glassesImgSrc}" class="tryon-glasses-img" style="
+            <div class="tryon-glasses-front" style="
               width: ${frameWidthPercent}%;
+              height: ${frameHeightPercent}%;
               left: ${centerX}%;
               top: ${centerY}%;
               transform: translate(-50%, -50%) rotate(${angle}deg);
-            " alt="${frame.nama}">
+            ">
+              ${renderFrontFrameOnly(frame.tipe, isAvoid)}
+            </div>
           </div>
           <div class="tryon-details">
             <div class="tryon-name">${frame.nama}</div>
@@ -419,7 +484,7 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      const promptText = `Periksa foto wajah ini. Deteksi titik pusat kedua pupil mata dalam persentase gambar (0-100), periksa apakah sedang mengenakan kacamata, analisis bentuk wajah, dan beri rekomendasi frame.
+      const promptText = `Periksa foto wajah ini. Deteksi titik pupil kedua mata dalam koordinat persentase [X, Y] (0-100), periksa apakah sedang memakai kacamata, klasifikasikan bentuk wajah & tone kulit, lalu berikan rekomendasi frame serta variasi warna yang beragam (sertakan putih, transparan/clear, hitam, emas, perak, atau warna kontras yang cocok).
 Keluarkan HANYA format JSON valid persis seperti skema ini:
 {
   "posisi_mata": {
@@ -428,24 +493,26 @@ Keluarkan HANYA format JSON valid persis seperti skema ini:
   },
   "sedang_memakai_kacamata": false,
   "evaluasi_kacamata_sekarang": null,
-  "bentuk_wajah": "Oval",
+  "bentuk_wajah": "Persegi",
   "tone_kulit": "Kuning Langsat",
   "frame_cocok": [
-    {"nama": "Kotak / Rectangular", "tipe": "square", "alasan": "Menambah definisi dan kontras yang seimbang pada struktur wajah."},
-    {"nama": "Wayfarer", "tipe": "wayfarer", "alasan": "Tampilan klasik dan fleksibel untuk hampir semua situasi."},
-    {"nama": "Geometric Hexagon", "tipe": "geometric", "alasan": "Memberikan aksen tegas tanpa merusak proporsi alami."}
+    {"nama": "Oval / Lonjong", "tipe": "oval", "alasan": "Melunakkan garis rahang yang tegas."},
+    {"nama": "Round / Bulat Klasik", "tipe": "round", "alasan": "Menciptakan keseimbangan kontras pada struktur wajah persegi."},
+    {"nama": "Aviator Depan", "tipe": "aviator", "alasan": "Bentuk teardrop melembutkan sudut wajah."}
   ],
   "warna_frame": [
-    {"nama": "Tortoise / Havana", "hex": "#703816"},
-    {"nama": "Hitam Matte", "hex": "#222222"},
-    {"nama": "Cokelat Tua", "hex": "#4a2e18"}
+    {"nama": "Putih Solid / Broken White", "hex": "#ffffff"},
+    {"nama": "Clear / Transparan", "hex": "#e2e8f0"},
+    {"nama": "Hitam Matte", "hex": "#1e293b"},
+    {"nama": "Silver / Perak Logam", "hex": "#cbd5e1"},
+    {"nama": "Gold / Emas Hangat", "hex": "#d4af37"},
+    {"nama": "Tortoise / Havana", "hex": "#703816"}
   ],
   "frame_hindari": [
-    {"nama": "Bulat Penuh (Round) Kecil", "tipe": "round", "alasan": "Ukuran kecil membuat wajah tampak tidak seimbang."}
+    {"nama": "Kotak Penuh / Rectangular Tebal", "tipe": "square", "alasan": "Menambah ketegasan berlebih sehingga wajah tampak terlalu kaku."}
   ]
 }
-Catatan posisi_mata adalah koordinat persentase [X, Y] dari sudut kiri-atas (0-100%).
-Pilihan nilai 'tipe' frame: "square", "wayfarer", "cateye", "round", "aviator", "rimless", "half-frame", "butterfly", "geometric", "oval".`;
+Catatan opsi nilai 'tipe': "square", "wayfarer", "cateye", "round", "aviator", "rimless", "half-frame", "geometric", "oval".`;
 
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
@@ -506,28 +573,28 @@ Pilihan nilai 'tipe' frame: "square", "wayfarer", "cateye", "round", "aviator", 
           document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
           document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
 
-          // Render Slider Frame Cocok (Virtual Try-on Real)
+          // Render Slider Frame Cocok
           let matchSliderHtml = "";
           (res.frame_cocok || []).forEach(f => {
-            matchSliderHtml += createRealTryonCard(f, capturedPhotoUrl, res.posisi_mata, false);
+            matchSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, false);
           });
           document.getElementById('matchFramesSlider').innerHTML = matchSliderHtml;
 
-          // Render Palet Warna
+          // Render Palet Warna Lengkap (Termasuk Putih, Perak, Clear, dll.)
           let colorsHtml = "";
           (res.warna_frame || []).forEach(c => {
             colorsHtml += `
               <div class="color-chip">
-                <span class="color-dot" style="background: ${c.hex || '#333'};"></span>
+                <span class="color-dot" style="background: ${c.hex || '#ffffff'};"></span>
                 <span>${c.nama}</span>
               </div>`;
           });
           document.getElementById('colorsList').innerHTML = colorsHtml;
 
-          // Render Slider Frame Dihindari (Virtual Try-on Real)
+          // Render Slider Frame Dihindari
           let avoidSliderHtml = "";
           (res.frame_hindari || []).forEach(f => {
-            avoidSliderHtml += createRealTryonCard(f, capturedPhotoUrl, res.posisi_mata, true);
+            avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, true);
           });
           document.getElementById('avoidFramesSlider').innerHTML = avoidSliderHtml;
 

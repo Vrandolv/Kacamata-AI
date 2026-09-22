@@ -51,7 +51,7 @@
     }
     canvas { display: none; }
     
-    /* PANDUAN POSISI MATA & WAJAH VIRTUAL */
+    /* PANDUAN OVAL: ATAS LEBAR (DOHI), BAWAH MERUNCING (DAGU) */
     .face-guide-overlay {
       position: absolute;
       top: 0;
@@ -60,56 +60,60 @@
       height: 100%;
       pointer-events: none;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 5;
     }
 
-    /* Lingkaran bentuk kepala */
+    /* DEFAULT: WARNA MERAH / BELUM PAS */
     .guide-oval {
-      width: 210px;
-      height: 290px;
-      border: 2px dashed rgba(56, 189, 248, 0.5);
-      border-radius: 50% 50% 48% 48% / 60% 60% 40% 40%;
+      width: 220px;
+      height: 300px;
+      border: 3px dashed #ef4444;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
       position: relative;
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+      transition: border-color 0.25s, box-shadow 0.25s;
     }
 
-    /* Garis target ketinggian mata */
-    .guide-eye-line {
+    .guide-oval .crosshair {
       position: absolute;
-      top: 42%;
-      left: 5%;
-      width: 90%;
-      height: 1px;
-      background: rgba(245, 158, 11, 0.8);
-      box-shadow: 0 0 8px #f59e0b;
+      width: 24px;
+      height: 24px;
+    }
+    .guide-oval .crosshair::before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      left: 0;
+      width: 24px;
+      height: 2px;
+      background: #ef4444;
+      transition: background 0.25s;
+    }
+    .guide-oval .crosshair::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 11px;
+      width: 2px;
+      height: 24px;
+      background: #ef4444;
+      transition: background 0.25s;
     }
 
-    /* Label panduan mata */
-    .guide-eye-tag {
-      position: absolute;
-      top: 36%;
-      background: rgba(15, 23, 42, 0.8);
-      color: #fbbf24;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 10px;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      letter-spacing: 0.5px;
+    /* WARNA HIJAU JIKA WAJAH SUDAH DI DALAM OVAL */
+    .guide-oval.matched {
+      border: 3px solid #10b981;
+      border-style: solid;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.6);
     }
-
-    .guide-instruction {
-      position: absolute;
-      bottom: 12px;
-      background: rgba(11, 19, 34, 0.85);
-      color: #e2e8f0;
-      font-size: 11.5px;
-      padding: 5px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+    .guide-oval.matched .crosshair::before,
+    .guide-oval.matched .crosshair::after {
+      background: #10b981;
     }
 
     .scan-laser {
@@ -196,13 +200,10 @@
       </div>
 
       <div class="mirror-box">
-        <!-- Target Garis Virtual -->
         <div id="faceGuide" class="face-guide-overlay">
-          <div class="guide-oval">
-            <div class="guide-eye-line"></div>
+          <div id="targetOval" class="guide-oval">
+            <div class="crosshair"></div>
           </div>
-          <div class="guide-eye-tag">TARGET POSISI MATA</div>
-          <div class="guide-instruction">👁️ Sejajarkan mata di garis & tatap lurus</div>
         </div>
 
         <div id="scanLaser" class="scan-laser"></div>
@@ -255,6 +256,7 @@
     const actionBtn = document.getElementById('actionBtn');
     const scanLaser = document.getElementById('scanLaser');
     const faceGuide = document.getElementById('faceGuide');
+    const targetOval = document.getElementById('targetOval');
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
     const noticeBox = document.getElementById('noticeBox');
@@ -263,6 +265,14 @@
     let isProcessing = false;
     let stepTimer = null;
 
+    // Deteksi wajah native browser (Shape Detection API) jika didukung Chrome HP
+    let faceDetector = null;
+    if ('FaceDetector' in window) {
+      try {
+        faceDetector = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+      } catch (e) {}
+    }
+
     window.onload = async function() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -270,16 +280,33 @@
           audio: false
         });
         video.srcObject = stream;
+        video.onloadedmetadata = () => {
+          trackFaceLoop();
+        };
       } catch (err) {
         alert("Harap izinkan akses kamera.");
       }
     };
 
+    // Loop pemantau posisi wajah (Merah -> Hijau)
+    async function trackFaceLoop() {
+      if (!isProcessing && faceDetector && video.readyState >= 2) {
+        try {
+          const faces = await faceDetector.detect(video);
+          if (faces.length > 0) {
+            targetOval.classList.add('matched');
+          } else {
+            targetOval.classList.remove('matched');
+          }
+        } catch (e) {}
+      }
+      requestAnimationFrame(trackFaceLoop);
+    }
+
     async function captureAndAnalyze() {
       if (isProcessing) return;
       isProcessing = true;
 
-      // Sembunyikan garis panduan sementara saat proses pemindaian laser berjalan
       faceGuide.style.display = "none";
       scanLaser.style.display = "block";
       noticeBox.style.display = "none";
@@ -294,7 +321,6 @@
         statusText.innerText = "Membaca proporsi & tone wajah...";
       }, 2000);
 
-      // Gambar murni kamera yang dikirim ke AI tanpa garis panduan
       canvas.width = 480;
       canvas.height = 640;
       const ctx = canvas.getContext('2d');

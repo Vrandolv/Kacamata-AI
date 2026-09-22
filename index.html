@@ -69,8 +69,7 @@
     
     .btn { display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.2s; }
     .btn:active { transform: scale(0.98); }
-    .btn.locked { background: #334155 !important; color: #94a3b8 !important; cursor: not-allowed !important; pointer-events: none !important; }
-    .btn:disabled { background: #334155; color: #94a3b8; }
+    .btn:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
     
     .privacy-notice { margin-top: 6px; font-size: 11px; color: #64748b; font-style: italic; }
     
@@ -109,6 +108,7 @@
       font-size: 12.5px;
       color: #fbbf24;
       line-height: 1.5;
+      text-align: left;
     }
     
     .result-container { margin-top: 14px; display: none; text-align: left; }
@@ -140,16 +140,14 @@
       </div>
       <canvas id="canvas"></canvas>
 
-      <button id="actionBtn" class="btn" onclick="handleButtonClick()">Mulai Analisis</button>
+      <button id="actionBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
       
       <div class="privacy-notice">
         * Foto tidak disimpan di server atau perangkat manapun.
       </div>
 
-      <!-- Pesan Peringatan Ramah: Server Penuh -->
       <div id="noticeBox" class="notice-box"></div>
 
-      <!-- Status Animasi Memindai -->
       <div id="statusBox" class="status-box">
         <div id="statusText" class="status-text">Menyesuaikan fokus cermin...</div>
         <div class="loader-bar">
@@ -157,7 +155,6 @@
         </div>
       </div>
       
-      <!-- Hasil Analisis -->
       <div id="resultContainer" class="result-container">
         <div class="tags-row">
           <div class="tag-badge">
@@ -193,7 +190,6 @@
     const resultContainer = document.getElementById('resultContainer');
 
     let isProcessing = false;
-    let isCooldown = false;
     let stepTimer = null;
 
     window.onload = async function() {
@@ -208,37 +204,10 @@
       }
     };
 
-    function handleButtonClick() {
-      if (isProcessing || isCooldown) return;
-      captureAndAnalyze();
-    }
-
-    // Fungsi penguncian 30 detik
-    function startCooldownTimer(seconds = 30) {
-      isCooldown = true;
-      actionBtn.disabled = true;
-      actionBtn.classList.add("locked");
-
-      let remaining = seconds;
-      actionBtn.innerText = `Coba Lagi dalam ${remaining} detik...`;
-
-      const interval = setInterval(() => {
-        remaining--;
-        if (remaining > 0) {
-          actionBtn.innerText = `Coba Lagi dalam ${remaining} detik...`;
-        } else {
-          clearInterval(interval);
-          isCooldown = false;
-          actionBtn.disabled = false;
-          actionBtn.classList.remove("locked");
-          actionBtn.innerText = "Mulai Analisis Lagi";
-          noticeBox.style.display = "none";
-        }
-      }, 1000);
-    }
-
     async function captureAndAnalyze() {
+      if (isProcessing) return;
       isProcessing = true;
+
       scanLaser.style.display = "block";
       noticeBox.style.display = "none";
       resultContainer.style.display = "none";
@@ -250,7 +219,7 @@
       statusText.innerText = "Menyesuaikan fokus cermin...";
       stepTimer = setTimeout(() => {
         statusText.innerText = "Membaca proporsi & tone wajah...";
-      }, 3000);
+      }, 2000);
 
       canvas.width = 400;
       canvas.height = 533;
@@ -274,15 +243,11 @@ Keluarkan HANYA format JSON valid tanpa tanda kutip markdown persis seperti ini:
   ]
 }`;
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(_KEY)}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(_KEY)}`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": _KEY
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             contents: [{
@@ -299,15 +264,18 @@ Keluarkan HANYA format JSON valid tanpa tanda kutip markdown persis seperti ini:
             generationConfig: {
               responseMimeType: "application/json"
             }
-          }),
-          signal: controller.signal
+          })
         });
 
-        clearTimeout(timeoutId);
         const data = await response.json();
 
         if (data.error) {
-          throw new Error("Server penuh");
+          statusBox.style.display = "none";
+          noticeBox.innerHTML = `<strong>Pesan Google:</strong> ${data.error.message || JSON.stringify(data.error)}`;
+          noticeBox.style.display = "block";
+          actionBtn.disabled = false;
+          actionBtn.innerText = "Mulai Analisis";
+          return;
         }
 
         let rawText = data.candidates[0].content.parts[0].text;
@@ -346,10 +314,10 @@ Keluarkan HANYA format JSON valid tanpa tanda kutip markdown persis seperti ini:
 
       } catch (err) {
         statusBox.style.display = "none";
-        noticeBox.innerText = "Sedang banyak permintaan, server penuh. Mohon mencoba beberapa saat lagi.";
+        noticeBox.innerHTML = `<strong>Pesan Sistem:</strong> ${err.message}`;
         noticeBox.style.display = "block";
-        
-        startCooldownTimer(30);
+        actionBtn.disabled = false;
+        actionBtn.innerText = "Mulai Analisis";
       } finally {
         isProcessing = false;
         clearTimeout(stepTimer);

@@ -10,22 +10,22 @@
     .container { width: 100%; max-width: 480px; }
     .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
     
-    /* Header Brand */
+    /* Header Brand Rapat Tanpa Gap */
     .brand-header {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
-      gap: 1px;
+      gap: 0px;
       margin: 4px 0 14px;
     }
     .brand-logo {
       height: 32px;
       width: auto;
       object-fit: contain;
-      margin: 0;
+      margin: 0 -2px 0 0;
       padding: 0;
-      display: inline-block;
+      display: block;
     }
     .brand-title {
       margin: 0;
@@ -35,7 +35,7 @@
       font-weight: 700;
       letter-spacing: -0.2px;
       line-height: 1;
-      display: inline-block;
+      display: block;
     }
     
     /* Layar Cermin */
@@ -58,7 +58,7 @@
     }
     canvas { display: none; }
 
-    /* Panduan Garis Wajah Putih Bersih (Dahi Lebar, Dagu Tirus) */
+    /* Panduan Garis Wajah Putih Bersih (Atas Dahi Lebar, Bawah Dagu Tirus) */
     .face-guide-overlay {
       position: absolute;
       top: 0;
@@ -72,25 +72,25 @@
       justify-content: center;
     }
     .guide-oval {
-      width: 65%;
-      height: 75%;
+      width: 66%;
+      height: 76%;
       border: 2px dashed rgba(255, 255, 255, 0.85);
-      border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
       position: relative;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
     .guide-eye-line {
       position: absolute;
-      top: 40%;
-      left: 12%;
-      right: 12%;
+      top: 45%;
+      left: 10%;
+      right: 10%;
       height: 1px;
-      border-top: 1.5px dotted rgba(255, 255, 255, 0.7);
+      border-top: 1.5px dotted rgba(255, 255, 255, 0.75);
     }
     .guide-tip {
       position: absolute;
       bottom: 12px;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.82);
       border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 5px 12px;
       border-radius: 20px;
@@ -175,15 +175,15 @@
     .current-glasses-card {
       background: #0f172a;
       border-radius: 14px;
-      padding: 12px 14px;
+      padding: 14px;
       margin-bottom: 14px;
       border: 1px solid #d4af37;
-      box-shadow: 0 0 12px rgba(212, 175, 55, 0.18);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
     }
-    .cg-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .cg-status { font-size: 13px; font-weight: 700; color: #f8fafc; }
-    .cg-score-pill { background: #d4af37; color: #0b1120; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; }
-    .cg-eval { font-size: 12px; color: #cbd5e1; line-height: 1.45; }
+    .cg-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .cg-status { font-size: 14px; font-weight: 700; color: #f8fafc; }
+    .cg-score-pill { background: #d4af37; color: #0b1120; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; }
+    .cg-eval { font-size: 13px; color: #cbd5e1; line-height: 1.5; }
     
     .section-title { font-size: 13px; font-weight: bold; color: #cbd5e1; margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
     
@@ -271,7 +271,7 @@
       <div class="mirror-box">
         <video id="video" autoplay playsinline muted></video>
         
-        <!-- Panduan Garis Wajah Putih Bersih Proporsional -->
+        <!-- Panduan Garis Wajah Putih Bersih (Dahi di Atas, Dagu di Bawah) -->
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-oval">
             <div class="guide-eye-line"></div>
@@ -308,17 +308,24 @@
           </div>
         </div>
 
-        <!-- Kartu Evaluasi Kacamata Terpakai (Tepat di Atas Rekomendasi Frame) -->
+        <!-- Kartu Evaluasi Kacamata Terpakai -->
         <div id="currentGlassesContainer"></div>
 
-        <div class="section-title">✨ Rekomendasi Frame</div>
-        <div id="matchFramesSlider" class="carousel-slider"></div>
+        <!-- Bagian Try-on (Hanya Muncul Jika TIDAK Memakai Kacamata) -->
+        <div id="tryonSection" style="display: none;">
+          <div class="section-title">✨ Rekomendasi Frame</div>
+          <div id="matchFramesSlider" class="carousel-slider"></div>
+        </div>
 
+        <!-- Rekomendasi Warna (Selalu Tampil) -->
         <div class="section-title">🎨 Rekomendasi Warna Frame</div>
         <div id="colorsList" class="colors-grid"></div>
 
-        <div class="section-title" style="color: #f87171;">🚫 Frame Dihindari</div>
-        <div id="avoidFramesSlider" class="carousel-slider"></div>
+        <!-- Bagian Frame Dihindari (Hanya Muncul Jika TIDAK Memakai Kacamata) -->
+        <div id="avoidSection" style="display: none;">
+          <div class="section-title" style="color: #f87171;">🚫 Frame Dihindari</div>
+          <div id="avoidFramesSlider" class="carousel-slider"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -332,7 +339,9 @@
     const progressText = document.getElementById('progressText');
     const progressPercent = document.getElementById('progressPercent');
     const resultContainer = document.getElementById('resultContainer');
-    const faceGuide = document.getElementById('faceGuide');
+    const tryonSection = document.getElementById('tryonSection');
+    const avoidSection = document.getElementById('avoidSection');
+    const currentGlassesContainer = document.getElementById('currentGlassesContainer');
 
     let progressInterval = null;
     let currentVal = 0;
@@ -453,11 +462,11 @@
       if (percent < 20) {
         progressText.innerText = "Memeriksa pencahayaan & posisi wajah...";
       } else if (percent < 45) {
-        progressText.innerText = "Mengidentifikasi kacamata yang dipakai & kontur rahang...";
+        progressText.innerText = "Mengecek apakah memakai kacamata & kontur rahang...";
       } else if (percent < 70) {
-        progressText.innerText = "Menghitung jarak pupil & fitting hidung...";
+        progressText.innerText = "Menganalisis proporsi kesesuaian bingkai...";
       } else if (percent < 90) {
-        progressText.innerText = "Mencocokkan proporsi frame tampak depan...";
+        progressText.innerText = "Mengkalkulasi tone kulit & warna frame...";
       } else {
         progressText.innerText = "Menyelesaikan kurasi rekomendasi...";
       }
@@ -556,13 +565,15 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      const promptText = `Periksa foto wajah ini dengan sangat teliti:
-1. DETEKSI KACAMATA: Cek apakah orang di foto sedang memakai kacamata (frame/lensa di depan mata). JIKA YA, set "sedang_memakai_kacamata": true, beri "skor_cocok" (0-100), dan jelaskan di "deskripsi". JIKA TIDAK ADA kacamata sama sekali di wajah, barulah set false dan isi null.
-2. DETEKSI TITIK MATA: Titik pusat kedua pupil mata [X, Y] dalam koordinat persentase 0-100%.
-3. ANALISIS WAJAH: Klasifikasikan bentuk wajah dan tone kulit (misal: Kuning Langsat).
-4. REKOMENDASI WARNA: Pilih warna harmonis untuk Kuning Langsat (Gold, Tortoise, Cokelat Karamel, Clear Hangat, Rose Gold Hangat, Gunmetal). JANGAN beri warna putih pucat.
+      const promptText = `Periksa foto wajah ini dengan sangat cermat:
+1. DETEKSI KACAMATA: Cek apakah orang di foto sedang memakai kacamata (terlihat frame atau lensa terpasang di depan mata).
+   - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung persentase kecocokan "skor_cocok" (0-100) berdasarkan proporsi wajahnya, dan berikan evaluasi detail di "deskripsi". Jangan berikan rekomendasi frame baru (kosongkan frame_cocok dan frame_hindari dengan array kosong []).
+   - JIKA TIDAK MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": false, "evaluasi_kacamata_sekarang": null, lalu isi rekomendasi di "frame_cocok" dan "frame_hindari".
+2. TITIK MATA: Deteksi koordinat pupil kedua mata [X, Y] (0-100%).
+3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit (misal: Kuning Langsat).
+4. REKOMENDASI WARNA: Pilih warna frame yang serasi dengan tone kulit (Gold, Tortoise, Cokelat Karamel, Clear Transparan Hangat, Gunmetal).
 
-Keluarkan HANYA JSON valid persis dengan struktur ini:
+Keluarkan HANYA JSON valid persis seperti skema ini:
 {
   "posisi_mata": {
     "kiri": [42.5, 41.2],
@@ -570,14 +581,13 @@ Keluarkan HANYA JSON valid persis dengan struktur ini:
   },
   "sedang_memakai_kacamata": true,
   "evaluasi_kacamata_sekarang": {
-    "skor_cocok": 85,
-    "deskripsi": "Model frame yang sedang dipakai cukup selaras dengan garis rahang dan proporsi wajah."
+    "skor_cocok": 88,
+    "deskripsi": "Model frame yang sedang dipakai memiliki lengkungan yang serasi dengan proporsi wajah, memberi kesan seimbang."
   },
   "bentuk_wajah": "Persegi",
   "tone_kulit": "Kuning Langsat",
   "frame_cocok": [
-    {"nama": "Oval / Lonjong", "tipe": "oval", "alasan": "Melunakkan garis rahang yang tegas."},
-    {"nama": "Aviator Depan", "tipe": "aviator", "alasan": "Bentuk teardrop melembutkan sudut wajah."}
+    {"nama": "Oval / Lonjong", "tipe": "oval", "alasan": "Melunakkan garis rahang yang tegas."}
   ],
   "warna_frame": [
     {"nama": "Gold / Emas Hangat", "hex": "#d4af37"},
@@ -631,11 +641,15 @@ Keluarkan HANYA JSON valid persis dengan struktur ini:
           document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
           document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
 
-          // Render Analisis Kacamata Terpakai
-          const currentContainer = document.getElementById('currentGlassesContainer');
+          // Logika Kondisional Pemakai Kacamata
           if (res.sedang_memakai_kacamata && res.evaluasi_kacamata_sekarang) {
+            // Sembunyikan Virtual Try-on agar tidak menimpa kacamata asli
+            tryonSection.style.display = "none";
+            avoidSection.style.display = "none";
+
+            // Tampilkan Skor & Evaluasi Kacamata
             const evalData = res.evaluasi_kacamata_sekarang;
-            currentContainer.innerHTML = `
+            currentGlassesContainer.innerHTML = `
               <div class="current-glasses-card">
                 <div class="cg-top">
                   <span class="cg-status">👓 Kacamata Saat Ini</span>
@@ -643,20 +657,30 @@ Keluarkan HANYA JSON valid persis dengan struktur ini:
                 </div>
                 <div class="cg-eval">${evalData.deskripsi || ""}</div>
               </div>`;
-            currentContainer.style.display = "block";
+            currentGlassesContainer.style.display = "block";
           } else {
-            currentContainer.innerHTML = "";
-            currentContainer.style.display = "none";
+            // Jika TIDAK memakai kacamata, sembunyikan evaluasi kacamata dan tampilkan slider virtual try-on
+            currentGlassesContainer.innerHTML = "";
+            currentGlassesContainer.style.display = "none";
+
+            // Render Slider Rekomendasi Frame
+            let matchSliderHtml = "";
+            (res.frame_cocok || []).forEach(f => {
+              matchSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, false);
+            });
+            document.getElementById('matchFramesSlider').innerHTML = matchSliderHtml;
+            tryonSection.style.display = (res.frame_cocok && res.frame_cocok.length > 0) ? "block" : "none";
+
+            // Render Slider Frame Dihindari
+            let avoidSliderHtml = "";
+            (res.frame_hindari || []).forEach(f => {
+              avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, true);
+            });
+            document.getElementById('avoidFramesSlider').innerHTML = avoidSliderHtml;
+            avoidSection.style.display = (res.frame_hindari && res.frame_hindari.length > 0) ? "block" : "none";
           }
 
-          // Slider Rekomendasi Frame
-          let matchSliderHtml = "";
-          (res.frame_cocok || []).forEach(f => {
-            matchSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, false);
-          });
-          document.getElementById('matchFramesSlider').innerHTML = matchSliderHtml;
-
-          // Rekomendasi Warna
+          // Rekomendasi Warna (Tetap Tampil untuk Semua)
           let colorsHtml = "";
           (res.warna_frame || []).forEach(c => {
             colorsHtml += `
@@ -666,13 +690,6 @@ Keluarkan HANYA JSON valid persis dengan struktur ini:
               </div>`;
           });
           document.getElementById('colorsList').innerHTML = colorsHtml;
-
-          // Slider Frame Dihindari
-          let avoidSliderHtml = "";
-          (res.frame_hindari || []).forEach(f => {
-            avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, true);
-          });
-          document.getElementById('avoidFramesSlider').innerHTML = avoidSliderHtml;
 
           resultContainer.style.display = "block";
         });

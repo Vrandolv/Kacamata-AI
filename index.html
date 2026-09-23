@@ -10,7 +10,7 @@
     .container { width: 100%; max-width: 480px; }
     .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
     
-    /* Header Brand Rapat Tanpa Gap */
+    /* Header Brand Rapat */
     .brand-header {
       display: flex;
       align-items: center;
@@ -58,7 +58,7 @@
     }
     canvas { display: none; }
 
-    /* Panduan Garis Wajah Putih Bersih (Atas Dahi Lebar, Bawah Dagu Tirus) */
+    /* Panduan Garis Wajah & Gambar 2 Mata */
     .face-guide-overlay {
       position: absolute;
       top: 0;
@@ -72,20 +72,39 @@
       justify-content: center;
     }
     .guide-oval {
-      width: 66%;
-      height: 76%;
+      width: 68%;
+      height: 78%;
       border: 2px dashed rgba(255, 255, 255, 0.85);
-      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      border-radius: 50% 50% 42% 42% / 55% 55% 45% 45%;
       position: relative;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
-    .guide-eye-line {
+    .guide-eyes-wrap {
       position: absolute;
-      top: 45%;
-      left: 10%;
-      right: 10%;
-      height: 1px;
-      border-top: 1.5px dotted rgba(255, 255, 255, 0.75);
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64%;
+      display: flex;
+      justify-content: space-between;
+    }
+    .guide-eye-shape {
+      width: 36px;
+      height: 18px;
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+      position: relative;
+    }
+    .guide-eye-shape::after {
+      content: "";
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
     .guide-tip {
       position: absolute;
@@ -180,10 +199,24 @@
       border: 1px solid #d4af37;
       box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
     }
-    .cg-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .cg-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .cg-status { font-size: 14px; font-weight: 700; color: #f8fafc; }
     .cg-score-pill { background: #d4af37; color: #0b1120; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; }
-    .cg-eval { font-size: 13px; color: #cbd5e1; line-height: 1.5; }
+    
+    .cg-content {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .cg-thumb {
+      width: 78px;
+      height: 78px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid #334155;
+    }
+    .cg-eval { font-size: 13px; color: #cbd5e1; line-height: 1.5; flex: 1; margin: 0; }
     
     .section-title { font-size: 13px; font-weight: bold; color: #cbd5e1; margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
     
@@ -271,12 +304,15 @@
       <div class="mirror-box">
         <video id="video" autoplay playsinline muted></video>
         
-        <!-- Panduan Garis Wajah Putih Bersih (Dahi di Atas, Dagu di Bawah) -->
+        <!-- Panduan Garis Wajah & Gambar 2 Mata -->
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-oval">
-            <div class="guide-eye-line"></div>
+            <div class="guide-eyes-wrap">
+              <div class="guide-eye-shape"></div>
+              <div class="guide-eye-shape"></div>
+            </div>
           </div>
-          <div class="guide-tip">Posisikan dahi di atas, mata di garis titik, dagu di bawah</div>
+          <div class="guide-tip">Posisikan kedua mata tepat di dalam ikon mata</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -308,7 +344,7 @@
           </div>
         </div>
 
-        <!-- Kartu Evaluasi Kacamata Terpakai -->
+        <!-- Kartu Evaluasi Kacamata Terpakai dengan Foto -->
         <div id="currentGlassesContainer"></div>
 
         <!-- Bagian Try-on (Hanya Muncul Jika TIDAK Memakai Kacamata) -->
@@ -504,9 +540,9 @@
 
     function createTryonCard(frame, photoUrl, eyeData, isAvoid = false) {
       const lx = eyeData?.kiri?.[0] ?? 42;
-      const ly = eyeData?.kiri?.[1] ?? 42;
+      const ly = eyeData?.kiri?.[1] ?? 48;
       const rx = eyeData?.kanan?.[0] ?? 58;
-      const ry = eyeData?.kanan?.[1] ?? 42;
+      const ry = eyeData?.kanan?.[1] ?? 48;
 
       const eyeDistance = Math.hypot(rx - lx, ry - ly);
       const angle = Math.atan2(ry - ly, rx - lx) * (180 / Math.PI);
@@ -565,24 +601,24 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      const promptText = `Periksa foto wajah ini dengan sangat cermat:
-1. DETEKSI KACAMATA: Cek apakah orang di foto sedang memakai kacamata (terlihat frame atau lensa terpasang di depan mata).
-   - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung persentase kecocokan "skor_cocok" (0-100) berdasarkan proporsi wajahnya, dan berikan evaluasi detail di "deskripsi". Jangan berikan rekomendasi frame baru (kosongkan frame_cocok dan frame_hindari dengan array kosong []).
-   - JIKA TIDAK MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": false, "evaluasi_kacamata_sekarang": null, lalu isi rekomendasi di "frame_cocok" dan "frame_hindari".
-2. TITIK MATA: Deteksi koordinat pupil kedua mata [X, Y] (0-100%).
+      const promptText = `Periksa foto wajah ini dengan cermat:
+1. DETEKSI KACAMATA: Cek apakah orang di foto sedang memakai kacamata (terlihat bingkai/frame terpasang di depan mata).
+   - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan berikan ulasan kesesuaian di "deskripsi". Kosongkan "frame_cocok" dan "frame_hindari" ([]).
+   - JIKA TIDAK MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": false, "evaluasi_kacamata_sekarang": null, lalu isi "frame_cocok" dan "frame_hindari".
+2. TITIK MATA: Koordinat titik pupil kedua mata [X, Y] (0-100%).
 3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit (misal: Kuning Langsat).
-4. REKOMENDASI WARNA: Pilih warna frame yang serasi dengan tone kulit (Gold, Tortoise, Cokelat Karamel, Clear Transparan Hangat, Gunmetal).
+4. REKOMENDASI WARNA: Pilih warna frame yang cocok dengan tone kulit.
 
 Keluarkan HANYA JSON valid persis seperti skema ini:
 {
   "posisi_mata": {
-    "kiri": [42.5, 41.2],
-    "kanan": [58.5, 41.2]
+    "kiri": [42.5, 48.0],
+    "kanan": [58.5, 48.0]
   },
   "sedang_memakai_kacamata": true,
   "evaluasi_kacamata_sekarang": {
-    "skor_cocok": 88,
-    "deskripsi": "Model frame yang sedang dipakai memiliki lengkungan yang serasi dengan proporsi wajah, memberi kesan seimbang."
+    "skor_cocok": 85,
+    "deskripsi": "Model frame persegi panjang dengan sudut melunak ini sangat serasi dengan kontur wajah, menyeimbangkan garis rahang secara proporsional."
   },
   "bentuk_wajah": "Persegi",
   "tone_kulit": "Kuning Langsat",
@@ -641,29 +677,29 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
           document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
           document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
 
-          // Logika Kondisional Pemakai Kacamata
+          // Logika Penilaian Kacamata
           if (res.sedang_memakai_kacamata && res.evaluasi_kacamata_sekarang) {
-            // Sembunyikan Virtual Try-on agar tidak menimpa kacamata asli
             tryonSection.style.display = "none";
             avoidSection.style.display = "none";
 
-            // Tampilkan Skor & Evaluasi Kacamata
             const evalData = res.evaluasi_kacamata_sekarang;
             currentGlassesContainer.innerHTML = `
               <div class="current-glasses-card">
                 <div class="cg-top">
-                  <span class="cg-status">👓 Kacamata Saat Ini</span>
+                  <span class="cg-status">Kacamata Saat Ini</span>
                   <span class="cg-score-pill">Kecocokan: ${evalData.skor_cocok || 0}%</span>
                 </div>
-                <div class="cg-eval">${evalData.deskripsi || ""}</div>
+                <div class="cg-content">
+                  <img src="${capturedPhotoUrl}" class="cg-thumb" alt="Kacamata Terpakai">
+                  <p class="cg-eval">${evalData.deskripsi || ""}</p>
+                </div>
               </div>`;
             currentGlassesContainer.style.display = "block";
           } else {
-            // Jika TIDAK memakai kacamata, sembunyikan evaluasi kacamata dan tampilkan slider virtual try-on
             currentGlassesContainer.innerHTML = "";
             currentGlassesContainer.style.display = "none";
 
-            // Render Slider Rekomendasi Frame
+            // Render Rekomendasi Frame
             let matchSliderHtml = "";
             (res.frame_cocok || []).forEach(f => {
               matchSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, false);
@@ -671,7 +707,7 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
             document.getElementById('matchFramesSlider').innerHTML = matchSliderHtml;
             tryonSection.style.display = (res.frame_cocok && res.frame_cocok.length > 0) ? "block" : "none";
 
-            // Render Slider Frame Dihindari
+            // Render Frame Dihindari
             let avoidSliderHtml = "";
             (res.frame_hindari || []).forEach(f => {
               avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, true);
@@ -680,7 +716,7 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
             avoidSection.style.display = (res.frame_hindari && res.frame_hindari.length > 0) ? "block" : "none";
           }
 
-          // Rekomendasi Warna (Tetap Tampil untuk Semua)
+          // Rekomendasi Warna
           let colorsHtml = "";
           (res.warna_frame || []).forEach(c => {
             colorsHtml += `

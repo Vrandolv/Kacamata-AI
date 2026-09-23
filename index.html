@@ -177,10 +177,35 @@
     
     .result-container { margin-top: 16px; display: none; }
     
-    .tags-row { display: flex; gap: 8px; margin-bottom: 14px; }
-    .tag-badge { flex: 1; background: #0f172a; padding: 10px; border-radius: 12px; border: 1px solid #d4af37; text-align: center; }
-    .tag-title { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 2px; }
-    .tag-value { font-size: 15px; font-weight: bold; color: #fbbf24; }
+    /* Grid Parameter Wajah & Optik */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .metric-badge {
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #d4af37;
+      text-align: center;
+    }
+    .metric-badge.full-span {
+      grid-column: span 2;
+    }
+    .metric-title {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+      letter-spacing: 0.3px;
+    }
+    .metric-value {
+      font-size: 14px;
+      font-weight: bold;
+      color: #fbbf24;
+    }
 
     /* Kartu Penilaian Kacamata Yang Sedang Dipakai */
     .current-glasses-card {
@@ -328,15 +353,27 @@
       
       <!-- Hasil Analisis -->
       <div id="resultContainer" class="result-container">
-        <!-- Bentuk Wajah & Tone Kulit -->
-        <div class="tags-row">
-          <div class="tag-badge">
-            <div class="tag-title">Bentuk Wajah</div>
-            <div id="resFaceShape" class="tag-value">-</div>
+        <!-- Parameter Wajah & Ukuran Optik Rekomendasi -->
+        <div class="metrics-grid">
+          <div class="metric-badge">
+            <div class="metric-title">Bentuk Wajah</div>
+            <div id="resFaceShape" class="metric-value">-</div>
           </div>
-          <div class="tag-badge">
-            <div class="tag-title">Tone Kulit</div>
-            <div id="resSkinTone" class="tag-value">-</div>
+          <div class="metric-badge">
+            <div class="metric-title">Tone Kulit</div>
+            <div id="resSkinTone" class="metric-value">-</div>
+          </div>
+          <div class="metric-badge">
+            <div class="metric-title">Lebar Frame Ideal</div>
+            <div id="resFrameWidth" class="metric-value">-</div>
+          </div>
+          <div class="metric-badge">
+            <div class="metric-title">Lebar Bridge Hidung</div>
+            <div id="resBridgeWidth" class="metric-value">-</div>
+          </div>
+          <div class="metric-badge full-span">
+            <div class="metric-title">Tipe Bantalan Hidung (Nosepad)</div>
+            <div id="resNosepadType" class="metric-value">-</div>
           </div>
         </div>
 
@@ -494,13 +531,13 @@
       if (percent < 20) {
         progressText.innerText = "Memeriksa pencahayaan & posisi wajah...";
       } else if (percent < 45) {
-        progressText.innerText = "Mengecek apakah memakai kacamata & kontur rahang...";
+        progressText.innerText = "Mengukur lebar pelipis & bridge hidung...";
       } else if (percent < 70) {
-        progressText.innerText = "Menganalisis proporsi kesesuaian bingkai...";
+        progressText.innerText = "Menganalisis anatomi nosepad & geometri frame...";
       } else if (percent < 90) {
         progressText.innerText = "Mengkalkulasi tone kulit & warna frame...";
       } else {
-        progressText.innerText = "Menyelesaikan kurasi rekomendasi...";
+        progressText.innerText = "Menyelesaikan kurasi rekomendasi optik...";
       }
     }
 
@@ -604,13 +641,17 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      const promptText = `Periksa foto wajah ini dengan cermat:
-1. DETEKSI KACAMATA: Cek apakah orang di foto sedang memakai kacamata (terlihat bingkai/frame terpasang di depan mata).
-   - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan berikan ulasan kesesuaian di "deskripsi". Kosongkan "frame_cocok" dan "frame_hindari" ([]).
+      const promptText = `Periksa foto wajah ini dengan sangat cermat untuk kebutuhan analisis optik kacamata:
+1. DETEKSI KACAMATA: Cek apakah sedang memakai kacamata.
+   - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan jelaskan kesesuaian di "deskripsi". Kosongkan "frame_cocok" dan "frame_hindari" ([]).
    - JIKA TIDAK MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": false, "evaluasi_kacamata_sekarang": null, lalu isi "frame_cocok" dan "frame_hindari".
 2. TITIK MATA: Koordinat titik pupil kedua mata [X, Y] (0-100%).
-3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit secara objektif dan konsisten.
-4. REKOMENDASI WARNA: Pilih warna frame yang cocok dengan tone kulit.
+3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit secara objektif.
+4. PARAMETER SPESIFIKASI OPTIK BINGKAI:
+   - "lebar_frame_ideal": Estimasi ukuran lebar frame total yang ideal untuk proporsi pelipis wajah (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
+   - "lebar_bridge_hidung": Rekomendasi lebar jarak hidung/bridge (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
+   - "tipe_nosepad": Rekomendasi jenis bantalan hidung sesuai bentuk pangkal hidung (Pilih: "Nosepad Fleksibel (Bantalan Silikon)" atau "Fixed Bridge (Asetat/Plastik Menyatu)").
+5. REKOMENDASI WARNA: Pilih warna frame yang cocok dengan tone kulit.
 
 Keluarkan HANYA JSON valid persis seperti skema ini:
 {
@@ -618,13 +659,13 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
     "kiri": [42.5, 48.0],
     "kanan": [58.5, 48.0]
   },
-  "sedang_memakai_kacamata": true,
-  "evaluasi_kacamata_sekarang": {
-    "skor_cocok": 85,
-    "deskripsi": "Model frame persegi panjang dengan sudut melunak ini sangat serasi dengan kontur wajah, menyeimbangkan garis rahang secara proporsional."
-  },
+  "sedang_memakai_kacamata": false,
+  "evaluasi_kacamata_sekarang": null,
   "bentuk_wajah": "Persegi",
   "tone_kulit": "Kuning Langsat",
+  "lebar_frame_ideal": "L (140 - 145 mm)",
+  "lebar_bridge_hidung": "18 - 20 mm (Sedang)",
+  "tipe_nosepad": "Nosepad Fleksibel (Bantalan Silikon)",
   "frame_cocok": [
     {"nama": "Oval / Lonjong", "tipe": "oval", "alasan": "Melunakkan garis rahang yang tegas."}
   ],
@@ -683,8 +724,12 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
         const res = JSON.parse(rawText);
 
         finishProgress(() => {
+          // Render Metrik Bentuk Wajah & Optik
           document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
           document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
+          document.getElementById('resFrameWidth').innerText = res.lebar_frame_ideal || "-";
+          document.getElementById('resBridgeWidth').innerText = res.lebar_bridge_hidung || "-";
+          document.getElementById('resNosepadType').innerText = res.tipe_nosepad || "-";
 
           if (res.sedang_memakai_kacamata && res.evaluasi_kacamata_sekarang) {
             tryonSection.style.display = "none";

@@ -57,7 +57,7 @@
     }
     canvas { display: none; }
 
-    /* Panduan Garis Wajah SVG (Dahi di Atas, Dagu di Bawah, Tanpa Balik) */
+    /* Panduan Garis Wajah Proporsional & Lebih Lebar */
     .face-guide-overlay {
       position: absolute;
       top: 0;
@@ -71,32 +71,32 @@
       justify-content: center;
     }
     .guide-svg-wrap {
-      width: 82%;
-      height: 84%;
+      width: 90%;
+      height: 86%;
       position: relative;
     }
     .guide-svg-wrap svg {
       width: 100%;
       height: 100%;
-      filter: drop-shadow(0 0 4px rgba(255,255,255,0.3));
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
     }
     
-    /* Posisi Ikon Mata Pas & Bersih Tanpa Titik */
+    /* Posisi Ikon Mata Lebih Besar & Lebih Dekat */
     .guide-eyes-wrap {
       position: absolute;
       top: 38%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 66%;
+      width: 56%;
       display: flex;
       justify-content: space-between;
     }
     .guide-eye-shape {
-      width: 46px;
-      height: 24px;
-      border: 1.8px solid rgba(255, 255, 255, 0.9);
+      width: 58px;
+      height: 28px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
     }
     .guide-tip {
       position: absolute;
@@ -296,12 +296,12 @@
       <div class="mirror-box">
         <video id="video" autoplay playsinline muted></video>
         
-        <!-- Panduan Garis Wajah SVG Paten -->
+        <!-- Panduan Garis Wajah Proporsional & Lebih Lebar -->
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-svg-wrap">
-            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Lengkungan Paten: Dahi Lebar di Atas, Dagu Tirus di Bawah -->
-              <path d="M 100,10 C 175,10 185,90 170,180 C 158,245 130,270 100,270 C 70,270 42,245 30,180 C 15,90 25,10 100,10 Z" 
+            <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Lengkungan Lebih Lebar Mengikuti Proporsi Wajah Asli -->
+              <path d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
                     stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-dasharray="6 4" />
             </svg>
             <div class="guide-eyes-wrap">
@@ -309,7 +309,7 @@
               <div class="guide-eye-shape"></div>
             </div>
           </div>
-          <div class="guide-tip">Posisikan mata di dalam lingkaran mata</div>
+          <div class="guide-tip">Posisikan kedua mata di dalam garis mata</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -634,7 +634,7 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
 }`;
 
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${encodeURIComponent(apiKey)}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

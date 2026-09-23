@@ -583,14 +583,21 @@
 
       playCameraChime();
 
-      canvas.width = video.videoWidth || 720;
-      canvas.height = video.videoHeight || 960;
+      // Kompresi Kanvas Ringan (Hemat Token & Kuota)
+      const maxWidth = 480;
+      const originalWidth = video.videoWidth || 720;
+      const originalHeight = video.videoHeight || 960;
+      const scale = maxWidth / originalWidth;
+
+      canvas.width = maxWidth;
+      canvas.height = originalHeight * scale;
+
       const ctx = canvas.getContext('2d');
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      capturedPhotoUrl = canvas.toDataURL('image/jpeg', 0.85);
+      capturedPhotoUrl = canvas.toDataURL('image/jpeg', 0.75);
       const base64Image = capturedPhotoUrl.split(',')[1];
 
       analyzeBtn.disabled = true;
@@ -602,7 +609,7 @@
    - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan berikan ulasan kesesuaian di "deskripsi". Kosongkan "frame_cocok" dan "frame_hindari" ([]).
    - JIKA TIDAK MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": false, "evaluasi_kacamata_sekarang": null, lalu isi "frame_cocok" dan "frame_hindari".
 2. TITIK MATA: Koordinat titik pupil kedua mata [X, Y] (0-100%).
-3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit.
+3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit secara objektif dan konsisten.
 4. REKOMENDASI WARNA: Pilih warna frame yang cocok dengan tone kulit.
 
 Keluarkan HANYA JSON valid persis seperti skema ini:
@@ -651,7 +658,8 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
               ]
             }],
             generationConfig: {
-              responseMimeType: "application/json"
+              responseMimeType: "application/json",
+              temperature: 0.1
             }
           })
         });

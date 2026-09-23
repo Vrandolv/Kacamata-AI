@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Vrandolv</title>
+  <title>VRANDOLV</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #0b1120; margin: 0; padding: 12px; color: #f8fafc; display: flex; justify-content: center; }
     .container { width: 100%; max-width: 480px; }
     .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
     
-    /* Header Brand Rapat */
+    /* Header Brand Rapat & Huruf Besar */
     .brand-header {
       display: flex;
       align-items: center;
@@ -22,7 +22,7 @@
       height: 32px;
       width: auto;
       object-fit: contain;
-      margin-right: -4px;
+      margin-right: -6px;
       padding: 0;
       display: block;
     }
@@ -30,9 +30,9 @@
       margin: 0;
       padding: 0;
       color: #ffffff;
-      font-size: 21px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
       line-height: 1;
       display: block;
     }
@@ -57,7 +57,7 @@
     }
     canvas { display: none; }
 
-    /* Panduan Garis Wajah Proporsional & Lebih Lebar */
+    /* Panduan Garis Wajah SVG Proporsional */
     .face-guide-overlay {
       position: absolute;
       top: 0;
@@ -81,22 +81,22 @@
       filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
     }
     
-    /* Posisi Ikon Mata Lebih Besar & Lebih Dekat */
+    /* Ikon Mata Lebih Besar & Membulat Wajar */
     .guide-eyes-wrap {
       position: absolute;
       top: 38%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 56%;
+      width: 58%;
       display: flex;
       justify-content: space-between;
     }
     .guide-eye-shape {
-      width: 58px;
-      height: 28px;
+      width: 64px;
+      height: 36px;
       border: 2px solid rgba(255, 255, 255, 0.9);
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50% 50% 45% 45%;
+      background: rgba(255, 255, 255, 0.05);
     }
     .guide-tip {
       position: absolute;
@@ -289,18 +289,17 @@
     <div class="card">
       <div class="brand-header">
         <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
-        <span class="brand-title">Vrandolv</span>
+        <span class="brand-title">VRANDOLV</span>
       </div>
 
       <!-- Layar Cermin -->
       <div class="mirror-box">
         <video id="video" autoplay playsinline muted></video>
         
-        <!-- Panduan Garis Wajah Proporsional & Lebih Lebar -->
+        <!-- Panduan Garis Wajah Proporsional -->
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-svg-wrap">
             <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Lengkungan Lebih Lebar Mengikuti Proporsi Wajah Asli -->
               <path d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
                     stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-dasharray="6 4" />
             </svg>

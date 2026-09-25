@@ -22,9 +22,10 @@
     .guide-svg-wrap { width: 90%; height: 86%; position: relative; }
     .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
     
+    /* PANDUAN MATA: Ada di koordinat Top 38% */
     .guide-eyes-wrap { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); width: 58%; display: flex; justify-content: space-between; }
     .guide-eye-shape { width: 64px; height: 36px; border: 2px solid rgba(255, 255, 255, 0.9); border-radius: 50% 50% 45% 45%; background: rgba(255, 255, 255, 0.05); }
-    .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; }
+    .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center;}
     
     .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b, #d4af37); color: #0b1120; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
     .btn:active { transform: scale(0.98); }
@@ -104,7 +105,7 @@
               <div class="guide-eye-shape"></div>
             </div>
           </div>
-          <div class="guide-tip">Posisikan kedua mata di dalam garis mata</div>
+          <div class="guide-tip">PENTING: Posisikan mata tepat di dalam dua bulatan agar hasil kacamata pas!</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -224,18 +225,16 @@
       if (t === "lonjong") return "Frame/frame lonjong plastik.png";
       if (t === "persegi panjang") return "Frame/frame persegi panjang plastik.png";
       if (t === "bulat") return "Frame/frame bulat plastik.png";
-      
-      return "Frame/frame kotak plastik.png"; // Fallback default
+      return "Frame/frame kotak plastik.png";
     }
 
     function setProgressBar(percent) {
       progressBar.style.width = percent + "%";
       progressPercent.innerText = Math.round(percent) + "%";
-      if (percent < 20) progressText.innerText = "Memeriksa pencahayaan & posisi wajah...";
-      else if (percent < 45) progressText.innerText = "Mengukur lebar pelipis & bridge hidung...";
-      else if (percent < 70) progressText.innerText = "Menganalisis geometri wajah & posisi mata...";
-      else if (percent < 90) progressText.innerText = "Menghitung koordinat & skala kacamata (AR)...";
-      else progressText.innerText = "Menyelesaikan kurasi rekomendasi optik...";
+      if (percent < 20) progressText.innerText = "Memeriksa pencahayaan & kontur wajah...";
+      else if (percent < 50) progressText.innerText = "Menganalisis profil optik & skin tone...";
+      else if (percent < 80) progressText.innerText = "Memilih model frame yang proporsional...";
+      else progressText.innerText = "Menyelesaikan kurasi rekomendasi...";
     }
 
     function startProgress() {
@@ -256,11 +255,13 @@
       }, 35);
     }
 
-    function createTryonCard(frame, photoUrl, dataAI, isAvoid = false) {
-      // Mengambil perhitungan otomatis dari AI
-      const centerX = dataAI.posisi_kacamata_x || 50;
-      const centerY = dataAI.posisi_kacamata_y || 45;
-      const frameWidthPercent = dataAI.skala_lebar || 60;
+    // IDE RAJA: POSISI DIPATENKAN (HARDCODED)
+    function createTryonCard(frame, photoUrl, isAvoid = false) {
+      // Posisi dipaku permanen sesuai panduan wajah di kamera (guide-eyes-wrap ada di 38% top)
+      // Kita set top di 40% agar kacamata bertengger sempurna di pangkal hidung
+      const centerX = 50; 
+      const centerY = 40; 
+      const frameWidthPercent = 58; // Lebar paten yang cocok dengan panduan wajah
       
       const imgSrc = getFrameImageSrc(frame.tipe);
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
@@ -315,41 +316,33 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      // Perbaikan Prompt: Meminta AI menghitung presisi posisi dan ukuran kacamata
-      const promptText = `Periksa foto wajah ini dengan sangat cermat untuk kebutuhan analisis optik kacamata:
-1. DETEKSI KACAMATA: Cek apakah sedang memakai kacamata.
-   - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan jelaskan di "deskripsi". Kosongkan frame_cocok dan frame_hindari.
+      // PROMPT YANG LEBIH CEPAT: AI tidak perlu lagi pusing menebak koordinat piksel
+      const promptText = `Periksa foto wajah ini untuk kebutuhan rekomendasi optik:
+1. DETEKSI KACAMATA:
+   - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan isi "deskripsi". Kosongkan frame_cocok dan frame_hindari.
    - JIKA TIDAK: Set "sedang_memakai_kacamata": false, isi frame_cocok dan frame_hindari.
-2. PERHITUNGAN OTOMATIS (AR PLACEMENT):
-   - Hitung "posisi_kacamata_x": Titik tengah antara kedua mata (persentase 0-100, dari kiri ke kanan).
-   - Hitung "posisi_kacamata_y": Titik pangkal hidung (bridge) tempat kacamata bertengger (persentase 0-100, dari atas ke bawah).
-   - Hitung "skala_lebar": Persentase (0-100) seberapa lebar gambar kacamata harus ditampilkan agar pas menutupi area pelipis wajah di foto ini.
-3. BENTUK WAJAH & TONE KULIT: Klasifikasikan secara objektif berdasarkan foto.
-4. PARAMETER SPESIFIKASI OPTIK BINGKAI:
+2. BENTUK WAJAH & TONE KULIT: Klasifikasikan secara objektif (misal: Oval, Persegi, dll).
+3. PARAMETER SPESIFIKASI:
    - "lebar_frame_ideal": (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
    - "lebar_bridge_hidung": (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
    - "tipe_nosepad": (Pilih: "Nosepad Fleksibel" atau "Fixed Bridge").
-5. PILIHAN FRAME BINGKAI:
-   - "tipe" di dalam array HANYA boleh menggunakan kata kunci berikut:
-     ["oversized", "browline", "geometric", "wayfarer", "cateye", "kotak", "lonjong", "persegi panjang", "bulat"]
+4. PILIHAN FRAME BINGKAI:
+   - "tipe" HANYA boleh diisi: ["oversized", "browline", "geometric", "wayfarer", "cateye", "kotak", "lonjong", "persegi panjang", "bulat"]
 
-Keluarkan HANYA JSON valid persis seperti skema ini (ganti teks di dalam tanda kurung siku dengan hasil perhitunganmu):
+Keluarkan HANYA JSON valid:
 {
-  "posisi_kacamata_x": 50.5,
-  "posisi_kacamata_y": 42.0,
-  "skala_lebar": 65.0,
   "sedang_memakai_kacamata": false,
   "evaluasi_kacamata_sekarang": null,
-  "bentuk_wajah": "[Nama Bentuk Wajah]",
-  "tone_kulit": "[Nama Tone Kulit]",
+  "bentuk_wajah": "[Nama Bentuk]",
+  "tone_kulit": "[Nama Tone]",
   "lebar_frame_ideal": "[Pilih S/M/L]",
-  "lebar_bridge_hidung": "[Pilih Sempit/Sedang/Lebar]",
+  "lebar_bridge_hidung": "[Pilih Lebar Bridge]",
   "tipe_nosepad": "[Pilih Tipe Nosepad]",
   "frame_cocok": [
     {"nama": "[Tulis Nama Rekomendasi]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
   ],
   "warna_frame": [
-    {"nama": "[Rekomendasi Warna 1]", "hex": "[#KodeHex]"}
+    {"nama": "[Rekomendasi Warna]", "hex": "[#KodeHex]"}
   ],
   "frame_hindari": [
     {"nama": "[Tulis Nama Hindari]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
@@ -372,7 +365,7 @@ Keluarkan HANYA JSON valid persis seperti skema ini (ganti teks di dalam tanda k
           clearInterval(progressInterval);
           progressBox.style.display = "none";
           if (data.error.code === 429) {
-            if (confirm("Batas kuota gratisan API Key tercapai sementara. Apakah ingin memasukkan API Key baru?")) {
+            if (confirm("Batas API Key tercapai. Masukkan API Key baru?")) {
               localStorage.removeItem("gemini_api_key");
             }
           } else {
@@ -413,14 +406,14 @@ Keluarkan HANYA JSON valid persis seperti skema ini (ganti teks di dalam tanda k
 
             let matchSliderHtml = "";
             (res.frame_cocok || []).forEach(f => {
-              matchSliderHtml += createTryonCard(f, capturedPhotoUrl, res, false);
+              matchSliderHtml += createTryonCard(f, capturedPhotoUrl, false);
             });
             document.getElementById('matchFramesSlider').innerHTML = matchSliderHtml;
             tryonSection.style.display = (res.frame_cocok && res.frame_cocok.length > 0) ? "block" : "none";
 
             let avoidSliderHtml = "";
             (res.frame_hindari || []).forEach(f => {
-              avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, res, true);
+              avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, true);
             });
             document.getElementById('avoidFramesSlider').innerHTML = avoidSliderHtml;
             avoidSection.style.display = (res.frame_hindari && res.frame_hindari.length > 0) ? "block" : "none";

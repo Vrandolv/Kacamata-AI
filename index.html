@@ -18,23 +18,33 @@
     video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
     canvas { display: none; }
 
-    /* PANDUAN MATA & WAJAH (Merah ke Hijau) */
+    /* PANDUAN MATA & WAJAH */
     .face-guide-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .guide-svg-wrap { width: 90%; height: 86%; position: relative; }
     .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
     
-    /* Garis Wajah Default (Merah) */
-    .guide-svg-wrap svg path { stroke: rgba(239, 68, 68, 0.85); transition: stroke 0.3s ease; }
+    /* Garis Wajah Default (Putih) */
+    .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
     
-    .guide-eyes-wrap { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); width: 58%; display: flex; justify-content: space-between; }
+    /* SKETSA KACAMATA (Sama Persis dengan Koordinat Hasil AI) */
+    .guide-glasses-wrap { 
+      position: absolute; 
+      top: 40%; /* Sesuai centerY = 40 */
+      left: 49%; /* Sesuai centerX = 49 */
+      transform: translate(-50%, -50%); 
+      width: 62%; /* Sesuai frameWidthPercent = 62 */
+      pointer-events: none; 
+    }
+    .guide-glasses-wrap svg rect, .guide-glasses-wrap svg path {
+      transition: all 0.3s ease;
+    }
     
-    /* Lingkaran Mata Default (Merah) */
-    .guide-eye-shape { width: 64px; height: 36px; border: 2px solid rgba(239, 68, 68, 0.9); border-radius: 50% 50% 45% 45%; background: rgba(239, 68, 68, 0.05); transition: all 0.3s ease; }
-    .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(239, 68, 68, 0.5); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center; transition: all 0.3s ease; }
+    .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.5); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center; transition: all 0.3s ease; }
     
     /* Efek Saat Memindai (Scanning - Hijau) */
-    .scanning .guide-svg-wrap svg path { stroke: rgba(34, 197, 94, 0.9); }
-    .scanning .guide-eye-shape { border-color: rgba(34, 197, 94, 0.9); background: rgba(34, 197, 94, 0.2); box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
+    .scanning .guide-svg-wrap svg path.face-line { stroke: rgba(34, 197, 94, 0.9); }
+    .scanning .guide-glasses-wrap svg rect { stroke: rgba(34, 197, 94, 0.9); fill: rgba(34, 197, 94, 0.2); }
+    .scanning .guide-glasses-wrap svg path { stroke: rgba(34, 197, 94, 0.9); }
     .scanning .guide-tip { background: rgba(34, 197, 94, 0.9); color: #000; font-weight: bold; border-color: #000; }
     
     .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b, #d4af37); color: #0b1120; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
@@ -107,15 +117,21 @@
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-svg-wrap">
             <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
+              <path class="face-line" d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
                     stroke-width="2" stroke-dasharray="6 4" />
             </svg>
-            <div class="guide-eyes-wrap">
-              <div class="guide-eye-shape"></div>
-              <div class="guide-eye-shape"></div>
-            </div>
           </div>
-          <div class="guide-tip">PENTING: Posisikan mata tepat di dalam dua bulatan merah!</div>
+          
+          <!-- SKETSA KACAMATA MENGGANTIKAN DUA BULATAN MATA -->
+          <div class="guide-glasses-wrap">
+            <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+              <rect x="12" y="10" width="32" height="19" rx="3.5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+              <path d="M44 17 L56 17" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round"/>
+              <rect x="56" y="10" width="32" height="19" rx="3.5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+            </svg>
+          </div>
+
+          <div class="guide-tip">PENTING: Posisikan kacamata putih pas di area mata & hidung!</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -265,11 +281,11 @@
       }, 35);
     }
 
-    // POSISI DIPATENKAN: Geser Kiri sedikit & Skala diperkecil
+    // POSISI DIPATENKAN & DIPERBESAR
     function createTryonCard(frame, photoUrl, isAvoid = false) {
-      const centerX = 49; // 49% (Digeser sedikit ke kiri)
-      const centerY = 40; // 40% (Pas di pangkal hidung/mata panduan)
-      const frameWidthPercent = 54; // 54% (Lebar kacamata sedikit dikecilkan)
+      const centerX = 49; 
+      const centerY = 40; 
+      const frameWidthPercent = 62; // Diperbesar menjadi 62%
       
       const imgSrc = getFrameImageSrc(frame.tipe);
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
@@ -303,7 +319,7 @@
         else return;
       }
 
-      // EFEK HIJAU: Mengubah panduan jadi warna hijau saat memindai
+      // EFEK HIJAU: Mengubah panduan kacamata jadi warna hijau saat memindai
       const faceGuide = document.getElementById('faceGuide');
       const guideTip = document.querySelector('.guide-tip');
       faceGuide.classList.add('scanning');
@@ -455,9 +471,9 @@ Keluarkan HANYA JSON valid:
       } finally {
         analyzeBtn.disabled = false;
         
-        // Mengembalikan warna panduan ke semula (Merah) setelah proses selesai
+        // Mengembalikan warna panduan ke semula (Putih) setelah proses selesai
         faceGuide.classList.remove('scanning');
-        guideTip.innerText = "PENTING: Posisikan mata tepat di dalam dua bulatan merah!";
+        guideTip.innerText = "PENTING: Posisikan kacamata putih pas di area mata & hidung!";
       }
     }
   </script>

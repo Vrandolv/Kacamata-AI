@@ -65,7 +65,6 @@
     .tryon-image-wrap { width: 100%; height: 240px; position: relative; background: #000; overflow: hidden; }
     .tryon-image-wrap img.face-shot { width: 100%; height: 100%; object-fit: cover; }
     
-    /* Posisikan Kacamata PNG Tepat di Pusat/Tengah Objek */
     .tryon-glasses-front {
       position: absolute;
       transform-origin: center center;
@@ -268,12 +267,12 @@
       const angle = Math.atan2(ry - ly, rx - lx) * (180 / Math.PI);
       
       const centerX = (lx + rx) / 2;
-      // Perbaikan Center of The Object: Menurunkan kacamata sebesar 8% agar pas di mata
-      // Jika masih kurang turun, kamu bisa ganti angka 8 menjadi 10 atau 12
-      const centerY = ((ly + ry) / 2) + 8; 
+      
+      // PERBAIKAN: Menggunakan MINUS (-) untuk menaikkan posisi kacamata tepat ke area mata (center of the object)
+      const centerY = ((ly + ry) / 2) - 3; 
 
-      // Perkiraan lebar frame relatif terhadap jarak mata
-      const frameWidthPercent = Math.max(50, Math.min(eyeDistance * 2.8, 80));
+      // PERBAIKAN: Memperbesar pengali (dari 2.8 ke 3.2) agar skala kacamata lebih lebar dan natural
+      const frameWidthPercent = Math.max(55, Math.min(eyeDistance * 3.2, 85));
       const imgSrc = getFrameImageSrc(frame.tipe);
       
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";

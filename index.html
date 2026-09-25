@@ -213,7 +213,6 @@
       }
     }
 
-    // Fungsi pemanggil file PNG Kacamata
     function getFrameImageSrc(type) {
       const t = (type || "").toLowerCase();
       if (t === "oversized") return "Frame/frame oversized plastik.png";
@@ -234,8 +233,8 @@
       progressPercent.innerText = Math.round(percent) + "%";
       if (percent < 20) progressText.innerText = "Memeriksa pencahayaan & posisi wajah...";
       else if (percent < 45) progressText.innerText = "Mengukur lebar pelipis & bridge hidung...";
-      else if (percent < 70) progressText.innerText = "Menganalisis anatomi nosepad & geometri frame...";
-      else if (percent < 90) progressText.innerText = "Mengkalkulasi tone kulit & warna frame...";
+      else if (percent < 70) progressText.innerText = "Menganalisis geometri wajah & posisi mata...";
+      else if (percent < 90) progressText.innerText = "Menghitung koordinat & skala kacamata (AR)...";
       else progressText.innerText = "Menyelesaikan kurasi rekomendasi optik...";
     }
 
@@ -257,24 +256,13 @@
       }, 35);
     }
 
-    function createTryonCard(frame, photoUrl, eyeData, isAvoid = false) {
-      const lx = eyeData?.kiri?.[0] ?? 42;
-      const ly = eyeData?.kiri?.[1] ?? 48;
-      const rx = eyeData?.kanan?.[0] ?? 58;
-      const ry = eyeData?.kanan?.[1] ?? 48;
-
-      const eyeDistance = Math.hypot(rx - lx, ry - ly);
-      const angle = Math.atan2(ry - ly, rx - lx) * (180 / Math.PI);
+    function createTryonCard(frame, photoUrl, dataAI, isAvoid = false) {
+      // Mengambil perhitungan otomatis dari AI
+      const centerX = dataAI.posisi_kacamata_x || 50;
+      const centerY = dataAI.posisi_kacamata_y || 45;
+      const frameWidthPercent = dataAI.skala_lebar || 60;
       
-      const centerX = (lx + rx) / 2;
-      
-      // PERBAIKAN: Menggunakan MINUS (-) untuk menaikkan posisi kacamata tepat ke area mata (center of the object)
-      const centerY = ((ly + ry) / 2) - 3; 
-
-      // PERBAIKAN: Memperbesar pengali (dari 2.8 ke 3.2) agar skala kacamata lebih lebar dan natural
-      const frameWidthPercent = Math.max(55, Math.min(eyeDistance * 3.2, 85));
       const imgSrc = getFrameImageSrc(frame.tipe);
-      
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
 
       return `
@@ -286,7 +274,7 @@
               height: auto;
               left: ${centerX}%;
               top: ${centerY}%;
-              transform: translate(-50%, -50%) rotate(${angle}deg);
+              transform: translate(-50%, -50%);
               ${imgStyle}
             ">
           </div>
@@ -327,42 +315,44 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      // Perbaikan Prompt: Menggunakan format placeholder agar AI menganalisis ulang dengan benar
+      // Perbaikan Prompt: Meminta AI menghitung presisi posisi dan ukuran kacamata
       const promptText = `Periksa foto wajah ini dengan sangat cermat untuk kebutuhan analisis optik kacamata:
 1. DETEKSI KACAMATA: Cek apakah sedang memakai kacamata.
-   - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan jelaskan kesesuaian di "deskripsi". Kosongkan "frame_cocok" dan "frame_hindari" ([]).
-   - JIKA TIDAK MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": false, "evaluasi_kacamata_sekarang": null, lalu isi "frame_cocok" dan "frame_hindari".
-2. TITIK MATA: Koordinat titik pupil kedua mata [X, Y] (0-100%).
-3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit secara objektif berdasarkan foto nyata.
+   - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan jelaskan di "deskripsi". Kosongkan frame_cocok dan frame_hindari.
+   - JIKA TIDAK: Set "sedang_memakai_kacamata": false, isi frame_cocok dan frame_hindari.
+2. PERHITUNGAN OTOMATIS (AR PLACEMENT):
+   - Hitung "posisi_kacamata_x": Titik tengah antara kedua mata (persentase 0-100, dari kiri ke kanan).
+   - Hitung "posisi_kacamata_y": Titik pangkal hidung (bridge) tempat kacamata bertengger (persentase 0-100, dari atas ke bawah).
+   - Hitung "skala_lebar": Persentase (0-100) seberapa lebar gambar kacamata harus ditampilkan agar pas menutupi area pelipis wajah di foto ini.
+3. BENTUK WAJAH & TONE KULIT: Klasifikasikan secara objektif berdasarkan foto.
 4. PARAMETER SPESIFIKASI OPTIK BINGKAI:
-   - "lebar_frame_ideal": Estimasi ukuran lebar frame total yang ideal untuk proporsi pelipis wajah (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
-   - "lebar_bridge_hidung": Rekomendasi lebar jarak hidung/bridge (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
-   - "tipe_nosepad": Rekomendasi jenis bantalan hidung sesuai bentuk pangkal hidung (Pilih: "Nosepad Fleksibel (Bantalan Silikon)" atau "Fixed Bridge (Asetat/Plastik Menyatu)").
-5. PILIHAN FRAME BINGKAI (PENTING):
-   - Isi "tipe" di dalam array "frame_cocok" dan "frame_hindari" HANYA boleh menggunakan kata kunci berikut (pilih minimal 2 yang paling relevan untuk cocok, dan 1 untuk dihindari):
+   - "lebar_frame_ideal": (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
+   - "lebar_bridge_hidung": (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
+   - "tipe_nosepad": (Pilih: "Nosepad Fleksibel" atau "Fixed Bridge").
+5. PILIHAN FRAME BINGKAI:
+   - "tipe" di dalam array HANYA boleh menggunakan kata kunci berikut:
      ["oversized", "browline", "geometric", "wayfarer", "cateye", "kotak", "lonjong", "persegi panjang", "bulat"]
 
-Keluarkan HANYA JSON valid persis seperti skema ini (ganti teks di dalam tanda kurung siku dengan hasil analisismu):
+Keluarkan HANYA JSON valid persis seperti skema ini (ganti teks di dalam tanda kurung siku dengan hasil perhitunganmu):
 {
-  "posisi_mata": {
-    "kiri": [42.5, 48.0],
-    "kanan": [58.5, 48.0]
-  },
+  "posisi_kacamata_x": 50.5,
+  "posisi_kacamata_y": 42.0,
+  "skala_lebar": 65.0,
   "sedang_memakai_kacamata": false,
   "evaluasi_kacamata_sekarang": null,
-  "bentuk_wajah": "[Nama Bentuk Wajah Asli]",
-  "tone_kulit": "[Nama Tone Kulit Asli]",
+  "bentuk_wajah": "[Nama Bentuk Wajah]",
+  "tone_kulit": "[Nama Tone Kulit]",
   "lebar_frame_ideal": "[Pilih S/M/L]",
   "lebar_bridge_hidung": "[Pilih Sempit/Sedang/Lebar]",
   "tipe_nosepad": "[Pilih Tipe Nosepad]",
   "frame_cocok": [
-    {"nama": "[Tulis Nama Rekomendasi]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan sangat spesifik berdasarkan fitur wajah foto]"}
+    {"nama": "[Tulis Nama Rekomendasi]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
   ],
   "warna_frame": [
     {"nama": "[Rekomendasi Warna 1]", "hex": "[#KodeHex]"}
   ],
   "frame_hindari": [
-    {"nama": "[Tulis Nama Hindari]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik ketidakcocokan]"}
+    {"nama": "[Tulis Nama Hindari]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
   ]
 }`;
 
@@ -423,14 +413,14 @@ Keluarkan HANYA JSON valid persis seperti skema ini (ganti teks di dalam tanda k
 
             let matchSliderHtml = "";
             (res.frame_cocok || []).forEach(f => {
-              matchSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, false);
+              matchSliderHtml += createTryonCard(f, capturedPhotoUrl, res, false);
             });
             document.getElementById('matchFramesSlider').innerHTML = matchSliderHtml;
             tryonSection.style.display = (res.frame_cocok && res.frame_cocok.length > 0) ? "block" : "none";
 
             let avoidSliderHtml = "";
             (res.frame_hindari || []).forEach(f => {
-              avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, res.posisi_mata, true);
+              avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, res, true);
             });
             document.getElementById('avoidFramesSlider').innerHTML = avoidSliderHtml;
             avoidSection.style.display = (res.frame_hindari && res.frame_hindari.length > 0) ? "block" : "none";

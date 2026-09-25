@@ -71,7 +71,6 @@
       transform-origin: center center;
       pointer-events: none;
       filter: drop-shadow(0 7px 12px rgba(0,0,0,0.85));
-      /* Transisi transform ditangani di JavaScript agar presisi di tengah */
     }
     
     .tryon-details { padding: 10px 12px; flex: 1; }
@@ -215,7 +214,7 @@
       }
     }
 
-    // Fungsi Baru: Pemanggil file PNG Kacamata berdasarkan tipe dari AI
+    // Fungsi pemanggil file PNG Kacamata
     function getFrameImageSrc(type) {
       const t = (type || "").toLowerCase();
       if (t === "oversized") return "Frame/frame oversized plastik.png";
@@ -267,21 +266,22 @@
 
       const eyeDistance = Math.hypot(rx - lx, ry - ly);
       const angle = Math.atan2(ry - ly, rx - lx) * (180 / Math.PI);
+      
       const centerX = (lx + rx) / 2;
-      const centerY = (ly + ry) / 2;
+      // Perbaikan Center of The Object: Menurunkan kacamata sebesar 8% agar pas di mata
+      // Jika masih kurang turun, kamu bisa ganti angka 8 menjadi 10 atau 12
+      const centerY = ((ly + ry) / 2) + 8; 
 
-      // Persentase ukuran frame mungkin perlu disesuaikan dengan proporsi asli PNG kamu
+      // Perkiraan lebar frame relatif terhadap jarak mata
       const frameWidthPercent = Math.max(50, Math.min(eyeDistance * 2.8, 80));
       const imgSrc = getFrameImageSrc(frame.tipe);
       
-      // Jika masuk frame dihindari, beri efek redup pada gambar PNG-nya
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
 
       return `
         <div class="tryon-card ${isAvoid ? 'avoid' : ''}">
           <div class="tryon-image-wrap">
             <img src="${photoUrl}" class="face-shot" alt="Wajah">
-            <!-- Menempatkan kacamata tepat di pusat koordinat wajah (center of the object) -->
             <img src="${imgSrc}" class="tryon-glasses-front" alt="Kacamata" style="
               width: ${frameWidthPercent}%;
               height: auto;
@@ -328,22 +328,22 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      // Perbaikan Prompt: Memaksa AI hanya memilih dari 9 Tipe Frame yang ada
+      // Perbaikan Prompt: Menggunakan format placeholder agar AI menganalisis ulang dengan benar
       const promptText = `Periksa foto wajah ini dengan sangat cermat untuk kebutuhan analisis optik kacamata:
 1. DETEKSI KACAMATA: Cek apakah sedang memakai kacamata.
    - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan jelaskan kesesuaian di "deskripsi". Kosongkan "frame_cocok" dan "frame_hindari" ([]).
    - JIKA TIDAK MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": false, "evaluasi_kacamata_sekarang": null, lalu isi "frame_cocok" dan "frame_hindari".
 2. TITIK MATA: Koordinat titik pupil kedua mata [X, Y] (0-100%).
-3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit secara objektif.
+3. BENTUK WAJAH & TONE KULIT: Klasifikasikan bentuk wajah serta tone kulit secara objektif berdasarkan foto nyata.
 4. PARAMETER SPESIFIKASI OPTIK BINGKAI:
    - "lebar_frame_ideal": Estimasi ukuran lebar frame total yang ideal untuk proporsi pelipis wajah (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
    - "lebar_bridge_hidung": Rekomendasi lebar jarak hidung/bridge (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
    - "tipe_nosepad": Rekomendasi jenis bantalan hidung sesuai bentuk pangkal hidung (Pilih: "Nosepad Fleksibel (Bantalan Silikon)" atau "Fixed Bridge (Asetat/Plastik Menyatu)").
 5. PILIHAN FRAME BINGKAI (PENTING):
-   - Isi "tipe" di dalam array "frame_cocok" dan "frame_hindari" HANYA boleh menggunakan kata kunci berikut (pilih yang paling relevan):
+   - Isi "tipe" di dalam array "frame_cocok" dan "frame_hindari" HANYA boleh menggunakan kata kunci berikut (pilih minimal 2 yang paling relevan untuk cocok, dan 1 untuk dihindari):
      ["oversized", "browline", "geometric", "wayfarer", "cateye", "kotak", "lonjong", "persegi panjang", "bulat"]
 
-Keluarkan HANYA JSON valid persis seperti skema ini:
+Keluarkan HANYA JSON valid persis seperti skema ini (ganti teks di dalam tanda kurung siku dengan hasil analisismu):
 {
   "posisi_mata": {
     "kiri": [42.5, 48.0],
@@ -351,19 +351,19 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
   },
   "sedang_memakai_kacamata": false,
   "evaluasi_kacamata_sekarang": null,
-  "bentuk_wajah": "Persegi",
-  "tone_kulit": "Kuning Langsat",
-  "lebar_frame_ideal": "L (140 - 145 mm)",
-  "lebar_bridge_hidung": "18 - 20 mm (Sedang)",
-  "tipe_nosepad": "Nosepad Fleksibel (Bantalan Silikon)",
+  "bentuk_wajah": "[Nama Bentuk Wajah Asli]",
+  "tone_kulit": "[Nama Tone Kulit Asli]",
+  "lebar_frame_ideal": "[Pilih S/M/L]",
+  "lebar_bridge_hidung": "[Pilih Sempit/Sedang/Lebar]",
+  "tipe_nosepad": "[Pilih Tipe Nosepad]",
   "frame_cocok": [
-    {"nama": "Frame Kotak", "tipe": "kotak", "alasan": "Memberi sudut tegas pada wajah."}
+    {"nama": "[Tulis Nama Rekomendasi]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan sangat spesifik berdasarkan fitur wajah foto]"}
   ],
   "warna_frame": [
-    {"nama": "Gold / Emas Hangat", "hex": "#d4af37"}
+    {"nama": "[Rekomendasi Warna 1]", "hex": "[#KodeHex]"}
   ],
   "frame_hindari": [
-    {"nama": "Frame Bulat", "tipe": "bulat", "alasan": "Terlalu melunakkan wajah."}
+    {"nama": "[Tulis Nama Hindari]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik ketidakcocokan]"}
   ]
 }`;
 

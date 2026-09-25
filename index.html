@@ -18,7 +18,7 @@
     video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
     canvas { display: none; }
 
-    /* PANDUAN MATA & WAJAH */
+    /* PANDUAN WAJAH & KACAMATA PUTIH */
     .face-guide-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .guide-svg-wrap { width: 90%; height: 86%; position: relative; }
     .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
@@ -26,28 +26,33 @@
     /* Garis Wajah Default (Putih) */
     .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
     
-    /* BAYANGAN KACAMATA NYATA SEBAGAI PANDUAN */
+    /* PANDUAN KACAMATA (DIBUAT PUTIH TERANG) */
     .guide-glasses-wrap { 
       position: absolute; 
-      top: 43%; /* Diturunkan agar tidak menabrak alis */
+      top: 43%; 
       left: 49%; 
       transform: translate(-50%, -50%); 
-      width: 62%; /* Proporsional dengan wajah */
+      width: 62%; 
       pointer-events: none; 
     }
     .guide-glasses-wrap img {
       width: 100%;
       height: auto;
-      opacity: 0.5; /* Semi-transparan agar wajah tetap terlihat */
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+      opacity: 0.8; /* Dibuat lebih pekat agar mudah dilihat */
+      /* Trik CSS: Invert mengubah frame hitam jadi PUTIH, ditambah bayangan gelap agar terlihat jelas di wajah */
+      filter: invert(1) brightness(1.5) drop-shadow(0 2px 4px rgba(0,0,0,0.8));
       transition: all 0.3s ease;
     }
     
     .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.5); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center; transition: all 0.3s ease; }
     
-    /* Efek Saat Memindai (Scanning - Hijau) */
+    /* Efek Saat Memindai (Scanning - Kacamata Menyala Hijau) */
     .scanning .guide-svg-wrap svg path.face-line { stroke: rgba(34, 197, 94, 0.9); }
-    .scanning .guide-glasses-wrap img { filter: drop-shadow(0 0 12px rgba(34, 197, 94, 1)); opacity: 0.9; }
+    .scanning .guide-glasses-wrap img { 
+      opacity: 1;
+      /* Mempertahankan warna putih, tapi memancarkan aura hijau */
+      filter: invert(1) brightness(1.5) drop-shadow(0 0 15px rgba(34, 197, 94, 1)); 
+    }
     .scanning .guide-tip { background: rgba(34, 197, 94, 0.9); color: #000; font-weight: bold; border-color: #000; }
     
     .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b, #d4af37); color: #0b1120; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
@@ -130,7 +135,7 @@
             <img src="Frame/frame kotak plastik.png" alt="Panduan" onerror="this.style.display='none'">
           </div>
 
-          <div class="guide-tip">PENTING: Paskan bayangan kacamata di area mata & hidungmu!</div>
+          <div class="guide-tip">PENTING: Paskan bayangan kacamata putih di area mata & hidungmu!</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -280,10 +285,10 @@
       }, 35);
     }
 
-    // POSISI DIPATENKAN & DIPERBAIKI (TURUN SEDIKIT)
+    // POSISI DIPATENKAN & DIPERBAIKI (SAMA PERSIS DENGAN CERMIN)
     function createTryonCard(frame, photoUrl, isAvoid = false) {
       const centerX = 49; 
-      const centerY = 43; // Diturunkan ke 43 agar bingkai atas tidak kena alis
+      const centerY = 43; 
       const frameWidthPercent = 62; 
       
       const imgSrc = getFrameImageSrc(frame.tipe);
@@ -318,7 +323,7 @@
         else return;
       }
 
-      // EFEK HIJAU: Mengubah panduan jadi warna hijau saat memindai
+      // EFEK HIJAU: Mengubah panduan jadi warna hijau menyala saat memindai
       const faceGuide = document.getElementById('faceGuide');
       const guideTip = document.querySelector('.guide-tip');
       faceGuide.classList.add('scanning');
@@ -469,9 +474,9 @@ Keluarkan HANYA JSON valid:
       } finally {
         analyzeBtn.disabled = false;
         
-        // Mengembalikan warna panduan ke semula
+        // Mengembalikan warna panduan ke semula (Putih) setelah proses selesai
         faceGuide.classList.remove('scanning');
-        guideTip.innerText = "PENTING: Paskan bayangan kacamata di area mata & hidungmu!";
+        guideTip.innerText = "PENTING: Paskan bayangan kacamata putih di area mata & hidungmu!";
       }
     }
   </script>

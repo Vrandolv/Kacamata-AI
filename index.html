@@ -26,16 +26,20 @@
     /* Garis Wajah Default (Putih) */
     .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
     
-    /* SKETSA KACAMATA (Sama Persis dengan Koordinat Hasil AI) */
+    /* BAYANGAN KACAMATA NYATA SEBAGAI PANDUAN */
     .guide-glasses-wrap { 
       position: absolute; 
-      top: 40%; /* Sesuai centerY = 40 */
-      left: 49%; /* Sesuai centerX = 49 */
+      top: 43%; /* Diturunkan agar tidak menabrak alis */
+      left: 49%; 
       transform: translate(-50%, -50%); 
-      width: 62%; /* Sesuai frameWidthPercent = 62 */
+      width: 62%; /* Proporsional dengan wajah */
       pointer-events: none; 
     }
-    .guide-glasses-wrap svg rect, .guide-glasses-wrap svg path {
+    .guide-glasses-wrap img {
+      width: 100%;
+      height: auto;
+      opacity: 0.5; /* Semi-transparan agar wajah tetap terlihat */
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
       transition: all 0.3s ease;
     }
     
@@ -43,8 +47,7 @@
     
     /* Efek Saat Memindai (Scanning - Hijau) */
     .scanning .guide-svg-wrap svg path.face-line { stroke: rgba(34, 197, 94, 0.9); }
-    .scanning .guide-glasses-wrap svg rect { stroke: rgba(34, 197, 94, 0.9); fill: rgba(34, 197, 94, 0.2); }
-    .scanning .guide-glasses-wrap svg path { stroke: rgba(34, 197, 94, 0.9); }
+    .scanning .guide-glasses-wrap img { filter: drop-shadow(0 0 12px rgba(34, 197, 94, 1)); opacity: 0.9; }
     .scanning .guide-tip { background: rgba(34, 197, 94, 0.9); color: #000; font-weight: bold; border-color: #000; }
     
     .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b, #d4af37); color: #0b1120; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
@@ -122,16 +125,12 @@
             </svg>
           </div>
           
-          <!-- SKETSA KACAMATA MENGGANTIKAN DUA BULATAN MATA -->
+          <!-- MENGGUNAKAN BAYANGAN KACAMATA NYATA -->
           <div class="guide-glasses-wrap">
-            <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
-              <rect x="12" y="10" width="32" height="19" rx="3.5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-              <path d="M44 17 L56 17" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round"/>
-              <rect x="56" y="10" width="32" height="19" rx="3.5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-            </svg>
+            <img src="Frame/frame kotak plastik.png" alt="Panduan" onerror="this.style.display='none'">
           </div>
 
-          <div class="guide-tip">PENTING: Posisikan kacamata putih pas di area mata & hidung!</div>
+          <div class="guide-tip">PENTING: Paskan bayangan kacamata di area mata & hidungmu!</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -281,11 +280,11 @@
       }, 35);
     }
 
-    // POSISI DIPATENKAN & DIPERBESAR
+    // POSISI DIPATENKAN & DIPERBAIKI (TURUN SEDIKIT)
     function createTryonCard(frame, photoUrl, isAvoid = false) {
       const centerX = 49; 
-      const centerY = 40; 
-      const frameWidthPercent = 62; // Diperbesar menjadi 62%
+      const centerY = 43; // Diturunkan ke 43 agar bingkai atas tidak kena alis
+      const frameWidthPercent = 62; 
       
       const imgSrc = getFrameImageSrc(frame.tipe);
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
@@ -319,7 +318,7 @@
         else return;
       }
 
-      // EFEK HIJAU: Mengubah panduan kacamata jadi warna hijau saat memindai
+      // EFEK HIJAU: Mengubah panduan jadi warna hijau saat memindai
       const faceGuide = document.getElementById('faceGuide');
       const guideTip = document.querySelector('.guide-tip');
       faceGuide.classList.add('scanning');
@@ -346,7 +345,6 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      // PROMPT KETAT: Memaksa AI tidak kreatif dalam memberikan nama frame
       const promptText = `Periksa foto wajah ini untuk kebutuhan rekomendasi optik:
 1. DETEKSI KACAMATA:
    - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan isi "deskripsi". Kosongkan frame_cocok dan frame_hindari.
@@ -471,9 +469,9 @@ Keluarkan HANYA JSON valid:
       } finally {
         analyzeBtn.disabled = false;
         
-        // Mengembalikan warna panduan ke semula (Putih) setelah proses selesai
+        // Mengembalikan warna panduan ke semula
         faceGuide.classList.remove('scanning');
-        guideTip.innerText = "PENTING: Posisikan kacamata putih pas di area mata & hidung!";
+        guideTip.innerText = "PENTING: Paskan bayangan kacamata di area mata & hidungmu!";
       }
     }
   </script>

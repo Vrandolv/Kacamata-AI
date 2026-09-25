@@ -10,302 +10,78 @@
     .container { width: 100%; max-width: 480px; }
     .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
     
-    /* Header Brand Rapat & Huruf Besar */
-    .brand-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      margin: 4px 0 14px;
-    }
-    .brand-logo {
-      height: 32px;
-      width: auto;
-      object-fit: contain;
-      margin-right: -6px;
-      padding: 0;
-      display: block;
-    }
-    .brand-title {
-      margin: 0;
-      padding: 0;
-      color: #ffffff;
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      line-height: 1;
-      display: block;
-    }
+    .brand-header { display: flex; align-items: center; justify-content: center; width: 100%; margin: 4px 0 14px; }
+    .brand-logo { height: 32px; width: auto; object-fit: contain; margin-right: -6px; display: block; }
+    .brand-title { margin: 0; color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; line-height: 1; display: block; }
     
-    /* Layar Cermin */
-    .mirror-box {
-      width: 100%;
-      height: 52vh;
-      min-height: 360px;
-      border-radius: 16px;
-      overflow: hidden;
-      background: #000;
-      border: 2px solid #d4af37;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
-      position: relative;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scaleX(-1);
-    }
+    .mirror-box { width: 100%; height: 52vh; min-height: 360px; border-radius: 16px; overflow: hidden; background: #000; border: 2px solid #d4af37; box-shadow: 0 0 15px rgba(212, 175, 55, 0.25); position: relative; }
+    video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
     canvas { display: none; }
 
-    /* Panduan Garis Wajah SVG Proporsional */
-    .face-guide-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .guide-svg-wrap {
-      width: 90%;
-      height: 86%;
-      position: relative;
-    }
-    .guide-svg-wrap svg {
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
-    }
+    .face-guide-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .guide-svg-wrap { width: 90%; height: 86%; position: relative; }
+    .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
     
-    /* Ikon Mata Lebih Besar & Membulat Wajar */
-    .guide-eyes-wrap {
-      position: absolute;
-      top: 38%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 58%;
-      display: flex;
-      justify-content: space-between;
-    }
-    .guide-eye-shape {
-      width: 64px;
-      height: 36px;
-      border: 2px solid rgba(255, 255, 255, 0.9);
-      border-radius: 50% 50% 45% 45%;
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .guide-tip {
-      position: absolute;
-      bottom: 12px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 11px;
-      color: #ffffff;
-      letter-spacing: 0.3px;
-    }
+    .guide-eyes-wrap { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); width: 58%; display: flex; justify-content: space-between; }
+    .guide-eye-shape { width: 64px; height: 36px; border: 2px solid rgba(255, 255, 255, 0.9); border-radius: 50% 50% 45% 45%; background: rgba(255, 255, 255, 0.05); }
+    .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; }
     
-    /* Tombol Mulai Analisis */
-    .btn { 
-      display: block; 
-      width: 100%; 
-      padding: 15px; 
-      background: linear-gradient(135deg, #f59e0b, #d4af37); 
-      color: #0b1120; 
-      border: none; 
-      border-radius: 14px; 
-      font-size: 16px; 
-      font-weight: 800; 
-      cursor: pointer; 
-      text-align: center; 
-      margin-top: 12px; 
-      transition: 0.2s; 
-      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); 
-    }
+    .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b, #d4af37); color: #0b1120; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
     .btn:active { transform: scale(0.98); }
     .btn:disabled { background: #475569; color: #94a3b8; box-shadow: none; }
     
-    /* Progress Box Bertahap */
-    .progress-box {
-      display: none;
-      margin-top: 14px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      padding: 12px;
-      border-radius: 14px;
-    }
-    .progress-labels {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #fbbf24;
-      margin-bottom: 8px;
-    }
-    .progress-text {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .progress-percent {
-      font-weight: 700;
-      min-width: 38px;
-      text-align: right;
-    }
-    .progress-track {
-      width: 100%;
-      height: 8px;
-      background: #1e293b;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #d4af37, #f59e0b);
-      border-radius: 8px;
-      transition: width 0.2s ease-out;
-    }
+    .progress-box { display: none; margin-top: 14px; background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 14px; }
+    .progress-labels { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; color: #fbbf24; margin-bottom: 8px; }
+    .progress-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .progress-percent { font-weight: 700; min-width: 38px; text-align: right; }
+    .progress-track { width: 100%; height: 8px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+    .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #d4af37, #f59e0b); border-radius: 8px; transition: width 0.2s ease-out; }
     
     .result-container { margin-top: 16px; display: none; }
     
-    /* Grid Parameter Wajah & Optik */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .metric-badge {
-      background: #0f172a;
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid #d4af37;
-      text-align: center;
-    }
-    .metric-badge.full-span {
-      grid-column: span 2;
-    }
-    .metric-title {
-      font-size: 11px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-      letter-spacing: 0.3px;
-    }
-    .metric-value {
-      font-size: 14px;
-      font-weight: bold;
-      color: #fbbf24;
-    }
+    .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+    .metric-badge { background: #0f172a; padding: 10px; border-radius: 12px; border: 1px solid #d4af37; text-align: center; }
+    .metric-badge.full-span { grid-column: span 2; }
+    .metric-title { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 3px; }
+    .metric-value { font-size: 14px; font-weight: bold; color: #fbbf24; }
 
-    /* Kartu Penilaian Kacamata Yang Sedang Dipakai */
-    .current-glasses-card {
-      background: #0f172a;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
-      border: 1px solid #d4af37;
-      box-shadow: 0 0 14px rgba(212, 175, 55, 0.2);
-    }
+    .current-glasses-card { background: #0f172a; border-radius: 14px; padding: 14px; margin-bottom: 14px; border: 1px solid #d4af37; }
     .cg-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .cg-status { font-size: 14px; font-weight: 700; color: #f8fafc; }
     .cg-score-pill { background: #d4af37; color: #0b1120; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; }
-    
-    .cg-content {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-    }
-    .cg-thumb {
-      width: 82px;
-      height: 82px;
-      border-radius: 10px;
-      object-fit: cover;
-      flex-shrink: 0;
-      border: 1px solid #334155;
-    }
+    .cg-content { display: flex; gap: 12px; align-items: flex-start; }
+    .cg-thumb { width: 82px; height: 82px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid #334155; }
     .cg-eval { font-size: 13px; color: #cbd5e1; line-height: 1.5; flex: 1; margin: 0; }
     
-    .section-title { font-size: 13px; font-weight: bold; color: #cbd5e1; margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .section-title { font-size: 13px; font-weight: bold; color: #cbd5e1; margin: 16px 0 10px; text-transform: uppercase; }
     
-    /* Slider Virtual Try-On */
-    .carousel-slider {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 10px;
-      -webkit-overflow-scrolling: touch;
-    }
+    .carousel-slider { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; }
     .carousel-slider::-webkit-scrollbar { height: 5px; }
     .carousel-slider::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     
-    .tryon-card {
-      flex: 0 0 250px;
-      scroll-snap-align: start;
-      background: #0f172a;
-      border-radius: 14px;
-      border: 1px solid #334155;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .tryon-card.avoid {
-      border-color: #ef4444;
-      background: rgba(239, 68, 68, 0.08);
-    }
+    .tryon-card { flex: 0 0 250px; scroll-snap-align: start; background: #0f172a; border-radius: 14px; border: 1px solid #334155; overflow: hidden; display: flex; flex-direction: column; }
+    .tryon-card.avoid { border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
     
-    .tryon-image-wrap {
-      width: 100%;
-      height: 240px;
-      position: relative;
-      background: #000;
-      overflow: hidden;
-    }
-    .tryon-image-wrap img.face-shot {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .tryon-image-wrap { width: 100%; height: 240px; position: relative; background: #000; overflow: hidden; }
+    .tryon-image-wrap img.face-shot { width: 100%; height: 100%; object-fit: cover; }
+    
+    /* Posisikan Kacamata PNG Tepat di Pusat/Tengah Objek */
     .tryon-glasses-front {
       position: absolute;
       transform-origin: center center;
       pointer-events: none;
       filter: drop-shadow(0 7px 12px rgba(0,0,0,0.85));
+      /* Transisi transform ditangani di JavaScript agar presisi di tengah */
     }
     
-    .tryon-details {
-      padding: 10px 12px;
-      flex: 1;
-    }
-    .tryon-name {
-      font-size: 13px;
-      font-weight: bold;
-      color: #fbbf24;
-      margin-bottom: 4px;
-    }
-    .tryon-card.avoid .tryon-name {
-      color: #f87171;
-    }
-    .tryon-desc {
-      font-size: 11px;
-      color: #94a3b8;
-      line-height: 1.4;
-    }
+    .tryon-details { padding: 10px 12px; flex: 1; }
+    .tryon-name { font-size: 13px; font-weight: bold; color: #fbbf24; margin-bottom: 4px; }
+    .tryon-card.avoid .tryon-name { color: #f87171; }
+    .tryon-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
     
-    /* Palet Warna */
     .colors-grid { display: flex; flex-wrap: wrap; gap: 8px; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
     .color-chip { display: flex; align-items: center; background: #1e293b; padding: 6px 10px; border-radius: 20px; font-size: 12px; border: 1px solid #475569; }
-    .color-dot { width: 16px; height: 16px; border-radius: 50%; margin-right: 6px; border: 1px solid #64748b; box-shadow: 0 0 3px rgba(0,0,0,0.5); flex-shrink: 0; }
+    .color-dot { width: 16px; height: 16px; border-radius: 50%; margin-right: 6px; border: 1px solid #64748b; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -317,11 +93,8 @@
         <span class="brand-title">VRANDOLV</span>
       </div>
 
-      <!-- Layar Cermin -->
       <div class="mirror-box">
         <video id="video" autoplay playsinline muted></video>
-        
-        <!-- Panduan Garis Wajah Proporsional -->
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-svg-wrap">
             <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -340,7 +113,6 @@
 
       <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
       
-      <!-- Progress Bar Halus Bertema Emas -->
       <div id="progressBox" class="progress-box">
         <div class="progress-labels">
           <span id="progressText" class="progress-text">Memeriksa posisi wajah...</span>
@@ -351,9 +123,7 @@
         </div>
       </div>
       
-      <!-- Hasil Analisis -->
       <div id="resultContainer" class="result-container">
-        <!-- Parameter Wajah & Ukuran Optik Rekomendasi -->
         <div class="metrics-grid">
           <div class="metric-badge">
             <div class="metric-title">Bentuk Wajah</div>
@@ -377,20 +147,16 @@
           </div>
         </div>
 
-        <!-- Kartu Evaluasi Kacamata Terpakai dengan Foto Asli -->
         <div id="currentGlassesContainer"></div>
 
-        <!-- Bagian Try-on (Hanya Muncul Jika TIDAK Memakai Kacamata) -->
         <div id="tryonSection" style="display: none;">
           <div class="section-title">✨ Rekomendasi Frame</div>
           <div id="matchFramesSlider" class="carousel-slider"></div>
         </div>
 
-        <!-- Rekomendasi Warna (Selalu Tampil) -->
         <div class="section-title">🎨 Rekomendasi Warna Frame</div>
         <div id="colorsList" class="colors-grid"></div>
 
-        <!-- Bagian Frame Dihindari (Hanya Muncul Jika TIDAK Memakai Kacamata) -->
         <div id="avoidSection" style="display: none;">
           <div class="section-title" style="color: #f87171;">🚫 Frame Dihindari</div>
           <div id="avoidFramesSlider" class="carousel-slider"></div>
@@ -449,96 +215,30 @@
       }
     }
 
-    function renderFrontFrameOnly(type, isAvoid = false) {
-      const strokeCol = isAvoid ? "#dc2626" : "#0f172a";
-      const fillCol = isAvoid ? "rgba(220, 38, 38, 0.12)" : "rgba(255, 255, 255, 0.08)";
-      const highlight = isAvoid ? "#f87171" : "#e2e8f0";
+    // Fungsi Baru: Pemanggil file PNG Kacamata berdasarkan tipe dari AI
+    function getFrameImageSrc(type) {
       const t = (type || "").toLowerCase();
-
-      let frameShapes = "";
-
-      if (t.includes("rimless") || t.includes("frameless") || t.includes("bor")) {
-        frameShapes = `
-          <rect x="14" y="10" width="31" height="20" rx="3" fill="${fillCol}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 1"/>
-          <rect x="55" y="10" width="31" height="20" rx="3" fill="${fillCol}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 1"/>
-          <path d="M45 17 Q50 14 55 17" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="17" cy="13" r="1.2" fill="#cbd5e1"/>
-          <circle cx="83" cy="13" r="1.2" fill="#cbd5e1"/>
-        `;
-      } else if (t.includes("half") || t.includes("browline")) {
-        frameShapes = `
-          <path d="M11 11 Q28 8 45 12" fill="none" stroke="${strokeCol}" stroke-width="4.5" stroke-linecap="round"/>
-          <path d="M12 12 C12 26, 20 29, 28 29 C36 29, 44 26, 44 12" fill="${fillCol}" stroke="#64748b" stroke-width="1"/>
-          <path d="M45 15 Q50 12 55 15" fill="none" stroke="${strokeCol}" stroke-width="3"/>
-          <path d="M55 12 Q72 8 89 11" fill="none" stroke="${strokeCol}" stroke-width="4.5" stroke-linecap="round"/>
-          <path d="M56 12 C56 26, 64 29, 72 29 C80 29, 88 26, 88 12" fill="${fillCol}" stroke="#64748b" stroke-width="1"/>
-        `;
-      } else if (t.includes("round") || t.includes("bulat")) {
-        frameShapes = `
-          <circle cx="28" cy="20" r="14" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
-          <path d="M42 18 Q50 14 58 18" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
-          <circle cx="72" cy="20" r="14" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
-        `;
-      } else if (t.includes("aviat")) {
-        frameShapes = `
-          <path d="M12 13 C12 13, 26 10, 43 13 C44 25, 34 31, 26 31 C17 31, 12 24, 12 13 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="2.5"/>
-          <path d="M43 14 L57 14 M44 18 L56 18" fill="none" stroke="${strokeCol}" stroke-width="2"/>
-          <path d="M57 13 C74 10, 88 13, 88 13 C88 24, 83 31, 74 31 C66 31, 56 25, 57 13 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="2.5"/>
-        `;
-      } else if (t.includes("geo") || t.includes("hex") || t.includes("segi")) {
-        frameShapes = `
-          <polygon points="21,10 36,10 44,19 36,28 21,28 13,19" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.5" stroke-linejoin="round"/>
-          <path d="M44 18 L56 18" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
-          <polygon points="64,10 79,10 87,19 79,28 64,28 56,19" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.5" stroke-linejoin="round"/>
-        `;
-      } else if (t.includes("cat")) {
-        frameShapes = `
-          <path d="M11 20 C10 10, 24 8, 43 11 C45 20, 36 27, 26 27 C15 27, 11 24, 11 20 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8" stroke-linejoin="round"/>
-          <path d="M43 14 L57 14" fill="none" stroke="${strokeCol}" stroke-width="3.2" stroke-linecap="round"/>
-          <path d="M89 20 C90 10, 76 8, 57 11 C55 20, 64 27, 74 27 C85 27, 89 24, 89 20 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8" stroke-linejoin="round"/>
-        `;
-      } else if (t.includes("wayfarer")) {
-        frameShapes = `
-          <path d="M12 10 L44 13 L39 28 L17 27 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="4" stroke-linejoin="round"/>
-          <path d="M44 14 Q50 12 56 14" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M56 13 L88 10 L83 27 L61 28 Z" fill="${fillCol}" stroke="${strokeCol}" stroke-width="4" stroke-linejoin="round"/>
-        `;
-      } else {
-        frameShapes = `
-          <rect x="12" y="10" width="32" height="19" rx="3.5" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
-          <path d="M44 17 L56 17" fill="none" stroke="${strokeCol}" stroke-width="3.5" stroke-linecap="round"/>
-          <rect x="56" y="10" width="32" height="19" rx="3.5" fill="${fillCol}" stroke="${strokeCol}" stroke-width="3.8"/>
-        `;
-      }
-
-      const glare = `
-        <line x1="18" y1="13" x2="23" y2="24" stroke="${highlight}" stroke-width="1.2" opacity="0.45" stroke-linecap="round"/>
-        <line x1="62" y1="13" x2="67" y2="24" stroke="${highlight}" stroke-width="1.2" opacity="0.45" stroke-linecap="round"/>
-      `;
-
-      return `
-        <svg viewBox="0 0 100 40" style="width:100%; height:100%; display:block;" xmlns="http://www.w3.org/2000/svg">
-          ${frameShapes}
-          ${glare}
-        </svg>
-      `;
+      if (t === "oversized") return "Frame/frame oversized plastik.png";
+      if (t === "browline") return "Frame/frame browline plastik.png";
+      if (t === "geometric") return "Frame/frame geometric plastik.png";
+      if (t === "wayfarer") return "Frame/frame wayfarer plastik.png";
+      if (t === "cateye") return "Frame/frame cateye plastik.png";
+      if (t === "kotak") return "Frame/frame kotak plastik.png";
+      if (t === "lonjong") return "Frame/frame lonjong plastik.png";
+      if (t === "persegi panjang") return "Frame/frame persegi panjang plastik.png";
+      if (t === "bulat") return "Frame/frame bulat plastik.png";
+      
+      return "Frame/frame kotak plastik.png"; // Fallback default
     }
 
     function setProgressBar(percent) {
       progressBar.style.width = percent + "%";
       progressPercent.innerText = Math.round(percent) + "%";
-
-      if (percent < 20) {
-        progressText.innerText = "Memeriksa pencahayaan & posisi wajah...";
-      } else if (percent < 45) {
-        progressText.innerText = "Mengukur lebar pelipis & bridge hidung...";
-      } else if (percent < 70) {
-        progressText.innerText = "Menganalisis anatomi nosepad & geometri frame...";
-      } else if (percent < 90) {
-        progressText.innerText = "Mengkalkulasi tone kulit & warna frame...";
-      } else {
-        progressText.innerText = "Menyelesaikan kurasi rekomendasi optik...";
-      }
+      if (percent < 20) progressText.innerText = "Memeriksa pencahayaan & posisi wajah...";
+      else if (percent < 45) progressText.innerText = "Mengukur lebar pelipis & bridge hidung...";
+      else if (percent < 70) progressText.innerText = "Menganalisis anatomi nosepad & geometri frame...";
+      else if (percent < 90) progressText.innerText = "Mengkalkulasi tone kulit & warna frame...";
+      else progressText.innerText = "Menyelesaikan kurasi rekomendasi optik...";
     }
 
     function startProgress() {
@@ -546,28 +246,16 @@
       currentVal = 0;
       setProgressBar(0);
       clearInterval(progressInterval);
-      
       progressInterval = setInterval(() => {
-        if (currentVal < 88) {
-          currentVal += 0.55;
-          setProgressBar(currentVal);
-        }
+        if (currentVal < 88) { currentVal += 0.55; setProgressBar(currentVal); }
       }, 90);
     }
 
     function finishProgress(callback) {
       clearInterval(progressInterval);
       const finishTimer = setInterval(() => {
-        if (currentVal < 100) {
-          currentVal += 1.2;
-          setProgressBar(Math.min(100, currentVal));
-        } else {
-          clearInterval(finishTimer);
-          setTimeout(() => {
-            progressBox.style.display = "none";
-            if (callback) callback();
-          }, 350);
-        }
+        if (currentVal < 100) { currentVal += 1.2; setProgressBar(Math.min(100, currentVal)); } 
+        else { clearInterval(finishTimer); setTimeout(() => { progressBox.style.display = "none"; if (callback) callback(); }, 350); }
       }, 35);
     }
 
@@ -582,22 +270,26 @@
       const centerX = (lx + rx) / 2;
       const centerY = (ly + ry) / 2;
 
-      const frameWidthPercent = Math.max(54, Math.min(eyeDistance * 2.85, 84));
-      const frameHeightPercent = frameWidthPercent * 0.42;
+      // Persentase ukuran frame mungkin perlu disesuaikan dengan proporsi asli PNG kamu
+      const frameWidthPercent = Math.max(50, Math.min(eyeDistance * 2.8, 80));
+      const imgSrc = getFrameImageSrc(frame.tipe);
+      
+      // Jika masuk frame dihindari, beri efek redup pada gambar PNG-nya
+      const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
 
       return `
         <div class="tryon-card ${isAvoid ? 'avoid' : ''}">
           <div class="tryon-image-wrap">
             <img src="${photoUrl}" class="face-shot" alt="Wajah">
-            <div class="tryon-glasses-front" style="
+            <!-- Menempatkan kacamata tepat di pusat koordinat wajah (center of the object) -->
+            <img src="${imgSrc}" class="tryon-glasses-front" alt="Kacamata" style="
               width: ${frameWidthPercent}%;
-              height: ${frameHeightPercent}%;
+              height: auto;
               left: ${centerX}%;
               top: ${centerY}%;
               transform: translate(-50%, -50%) rotate(${angle}deg);
+              ${imgStyle}
             ">
-              ${renderFrontFrameOnly(frame.tipe, isAvoid)}
-            </div>
           </div>
           <div class="tryon-details">
             <div class="tryon-name">${frame.nama}</div>
@@ -611,16 +303,12 @@
       let apiKey = localStorage.getItem("gemini_api_key");
       if (!apiKey) {
         apiKey = prompt("Masukkan API Key Gemini:");
-        if (apiKey) {
-          localStorage.setItem("gemini_api_key", apiKey.trim());
-        } else {
-          return;
-        }
+        if (apiKey) localStorage.setItem("gemini_api_key", apiKey.trim());
+        else return;
       }
 
       playCameraChime();
 
-      // Kompresi Kanvas Ringan (Hemat Token & Kuota)
       const maxWidth = 480;
       const originalWidth = video.videoWidth || 720;
       const originalHeight = video.videoHeight || 960;
@@ -628,7 +316,6 @@
 
       canvas.width = maxWidth;
       canvas.height = originalHeight * scale;
-
       const ctx = canvas.getContext('2d');
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
@@ -641,6 +328,7 @@
       resultContainer.style.display = "none";
       startProgress();
 
+      // Perbaikan Prompt: Memaksa AI hanya memilih dari 9 Tipe Frame yang ada
       const promptText = `Periksa foto wajah ini dengan sangat cermat untuk kebutuhan analisis optik kacamata:
 1. DETEKSI KACAMATA: Cek apakah sedang memakai kacamata.
    - JIKA MEMAKAI KACAMATA: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan jelaskan kesesuaian di "deskripsi". Kosongkan "frame_cocok" dan "frame_hindari" ([]).
@@ -651,7 +339,9 @@
    - "lebar_frame_ideal": Estimasi ukuran lebar frame total yang ideal untuk proporsi pelipis wajah (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
    - "lebar_bridge_hidung": Rekomendasi lebar jarak hidung/bridge (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
    - "tipe_nosepad": Rekomendasi jenis bantalan hidung sesuai bentuk pangkal hidung (Pilih: "Nosepad Fleksibel (Bantalan Silikon)" atau "Fixed Bridge (Asetat/Plastik Menyatu)").
-5. REKOMENDASI WARNA: Pilih warna frame yang cocok dengan tone kulit.
+5. PILIHAN FRAME BINGKAI (PENTING):
+   - Isi "tipe" di dalam array "frame_cocok" dan "frame_hindari" HANYA boleh menggunakan kata kunci berikut (pilih yang paling relevan):
+     ["oversized", "browline", "geometric", "wayfarer", "cateye", "kotak", "lonjong", "persegi panjang", "bulat"]
 
 Keluarkan HANYA JSON valid persis seperti skema ini:
 {
@@ -667,41 +357,23 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
   "lebar_bridge_hidung": "18 - 20 mm (Sedang)",
   "tipe_nosepad": "Nosepad Fleksibel (Bantalan Silikon)",
   "frame_cocok": [
-    {"nama": "Oval / Lonjong", "tipe": "oval", "alasan": "Melunakkan garis rahang yang tegas."}
+    {"nama": "Frame Kotak", "tipe": "kotak", "alasan": "Memberi sudut tegas pada wajah."}
   ],
   "warna_frame": [
-    {"nama": "Gold / Emas Hangat", "hex": "#d4af37"},
-    {"nama": "Tortoise / Havana", "hex": "#703816"},
-    {"nama": "Cokelat Karamel", "hex": "#8c532b"},
-    {"nama": "Clear / Transparan Hangat", "hex": "#e5e5dc"}
+    {"nama": "Gold / Emas Hangat", "hex": "#d4af37"}
   ],
   "frame_hindari": [
-    {"nama": "Kotak Penuh / Rectangular Tebal", "tipe": "square", "alasan": "Mempertegas sudut wajah sehingga tampak kaku."}
+    {"nama": "Frame Bulat", "tipe": "bulat", "alasan": "Terlalu melunakkan wajah."}
   ]
 }`;
 
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            contents: [{
-              parts: [
-                { text: promptText },
-                {
-                  inlineData: {
-                    mimeType: "image/jpeg",
-                    data: base64Image
-                  }
-                }
-              ]
-            }],
-            generationConfig: {
-              responseMimeType: "application/json",
-              temperature: 0.1
-            }
+            contents: [{ parts: [ { text: promptText }, { inlineData: { mimeType: "image/jpeg", data: base64Image } } ] }],
+            generationConfig: { responseMimeType: "application/json", temperature: 0.1 }
           })
         });
 
@@ -711,7 +383,7 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
           clearInterval(progressInterval);
           progressBox.style.display = "none";
           if (data.error.code === 429) {
-            if (confirm("Batas kuota gratisan API Key tercapai sementara (tunggu 1 menit). Apakah ingin memasukkan API Key baru?")) {
+            if (confirm("Batas kuota gratisan API Key tercapai sementara. Apakah ingin memasukkan API Key baru?")) {
               localStorage.removeItem("gemini_api_key");
             }
           } else {
@@ -724,7 +396,6 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
         const res = JSON.parse(rawText);
 
         finishProgress(() => {
-          // Render Metrik Bentuk Wajah & Optik
           document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
           document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
           document.getElementById('resFrameWidth').innerText = res.lebar_frame_ideal || "-";
@@ -734,7 +405,6 @@ Keluarkan HANYA JSON valid persis seperti skema ini:
           if (res.sedang_memakai_kacamata && res.evaluasi_kacamata_sekarang) {
             tryonSection.style.display = "none";
             avoidSection.style.display = "none";
-
             const evalData = res.evaluasi_kacamata_sekarang;
             currentGlassesContainer.innerHTML = `
               <div class="current-glasses-card">

@@ -38,8 +38,7 @@
     .guide-glasses-wrap img {
       width: 100%;
       height: auto;
-      opacity: 0.8; /* Dibuat lebih pekat agar mudah dilihat */
-      /* Trik CSS: Invert mengubah frame hitam jadi PUTIH, ditambah bayangan gelap agar terlihat jelas di wajah */
+      opacity: 0.8;
       filter: invert(1) brightness(1.5) drop-shadow(0 2px 4px rgba(0,0,0,0.8));
       transition: all 0.3s ease;
     }
@@ -50,7 +49,6 @@
     .scanning .guide-svg-wrap svg path.face-line { stroke: rgba(34, 197, 94, 0.9); }
     .scanning .guide-glasses-wrap img { 
       opacity: 1;
-      /* Mempertahankan warna putih, tapi memancarkan aura hijau */
       filter: invert(1) brightness(1.5) drop-shadow(0 0 15px rgba(34, 197, 94, 1)); 
     }
     .scanning .guide-tip { background: rgba(34, 197, 94, 0.9); color: #000; font-weight: bold; border-color: #000; }
@@ -130,7 +128,6 @@
             </svg>
           </div>
           
-          <!-- MENGGUNAKAN BAYANGAN KACAMATA NYATA -->
           <div class="guide-glasses-wrap">
             <img src="Frame/frame kotak plastik.png" alt="Panduan" onerror="this.style.display='none'">
           </div>
@@ -247,7 +244,8 @@
     function getFrameImageSrc(type) {
       const t = (type || "").toLowerCase();
       if (t === "oversized") return "Frame/frame oversized plastik.png";
-      if (t === "browline") return "Frame/frame browline plastik.png";
+      // PENYESUAIAN 1: Mendukung penamaan typo "brownline" dari PNG asli
+      if (t === "browline" || t === "brownline") return "Frame/frame brownline plastik.png"; 
       if (t === "geometric") return "Frame/frame geometric plastik.png";
       if (t === "wayfarer") return "Frame/frame wayfarer plastik.png";
       if (t === "cateye") return "Frame/frame cateye plastik.png";
@@ -285,12 +283,20 @@
       }, 35);
     }
 
-    // POSISI DIPATENKAN & DIPERBAIKI (SAMA PERSIS DENGAN CERMIN)
     function createTryonCard(frame, photoUrl, isAvoid = false) {
-      const centerX = 49; 
-      const centerY = 43; 
-      const frameWidthPercent = 62; 
+      // Nilai Default
+      let centerX = 49; 
+      let centerY = 43; 
+      let frameWidthPercent = 62; 
       
+      const t = (frame.tipe || "").toLowerCase();
+      
+      // PENYESUAIAN 2: Jika frame persegi panjang, perkecil ukuran dan naikkan posisinya
+      if (t === "persegi panjang") {
+        centerY = 39; // Diubah dari 43 (Lebih ke atas)
+        frameWidthPercent = 54; // Diubah dari 62 (Lebih kecil)
+      }
+
       const imgSrc = getFrameImageSrc(frame.tipe);
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
 
@@ -323,7 +329,6 @@
         else return;
       }
 
-      // EFEK HIJAU: Mengubah panduan jadi warna hijau menyala saat memindai
       const faceGuide = document.getElementById('faceGuide');
       const guideTip = document.querySelector('.guide-tip');
       faceGuide.classList.add('scanning');
@@ -473,8 +478,6 @@ Keluarkan HANYA JSON valid:
         alert(err.message || String(err));
       } finally {
         analyzeBtn.disabled = false;
-        
-        // Mengembalikan warna panduan ke semula (Putih) setelah proses selesai
         faceGuide.classList.remove('scanning');
         guideTip.innerText = "PENTING: Paskan bayangan kacamata putih di area mata & hidungmu!";
       }

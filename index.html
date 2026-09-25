@@ -26,7 +26,7 @@
     /* Garis Wajah Default (Putih) */
     .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
     
-    /* PANDUAN KACAMATA (DISESUAIKAN AGAR TERLIHAT LEBIH TIPIS) */
+    /* PANDUAN KACAMATA */
     .guide-glasses-wrap { 
       position: absolute; 
       top: 43%; 
@@ -38,7 +38,6 @@
     .guide-glasses-wrap img {
       width: 100%;
       height: auto;
-      /* Opacity dan brightness diturunkan agar efek tebal bingkai berkurang */
       opacity: 0.65;
       filter: invert(1) brightness(1.1) drop-shadow(0 1px 2px rgba(0,0,0,0.4));
       transition: all 0.3s ease;
@@ -284,22 +283,26 @@
     }
 
     function createTryonCard(frame, photoUrl, isAvoid = false) {
-      // Nilai Default - Dinaikkan agar posisi kacamata sejajar dengan bola mata
       let centerX = 49; 
-      let centerY = 39; // Dinaikkan dari titik sebelumnya (43)
+      let centerY = 39; 
       let frameWidthPercent = 62; 
       
       const t = (frame.tipe || "").toLowerCase();
       
       // Penyesuaian ukuran dan posisi spesifik per tipe frame
       if (t === "persegi panjang") {
-        centerY = 34; // Dinaikkan lebih ekstra untuk model ini
+        centerX = 48; // Digeser sedikit ke kiri agar berada tepat di tengah wajah
+        centerY = 33; // Dinaikkan sedikit lagi agar pas di mata
         frameWidthPercent = 56; 
       } else if (t === "oversized") {
         frameWidthPercent = 75; 
-        centerY = 41; // Sedikit dinaikkan
+        centerY = 41; 
       } else if (t === "lonjong") {
-        frameWidthPercent = 72; // Diperbesar drastis agar tidak terlihat kekecilan
+        frameWidthPercent = 72; 
+      } else if (t === "wayfarer") {
+        centerY = 42; // Diturunkan sedikit agar ujung kacamata pas menyentuh atas telinga
+      } else if (t === "browline" || t === "brownline") {
+        centerY = 41; // Diturunkan sedikit
       }
 
       const imgSrc = getFrameImageSrc(frame.tipe);

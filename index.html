@@ -18,14 +18,24 @@
     video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
     canvas { display: none; }
 
+    /* PANDUAN MATA & WAJAH (Merah ke Hijau) */
     .face-guide-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .guide-svg-wrap { width: 90%; height: 86%; position: relative; }
-    .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+    .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
     
-    /* PANDUAN MATA: Ada di koordinat Top 38% */
+    /* Garis Wajah Default (Merah) */
+    .guide-svg-wrap svg path { stroke: rgba(239, 68, 68, 0.85); transition: stroke 0.3s ease; }
+    
     .guide-eyes-wrap { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); width: 58%; display: flex; justify-content: space-between; }
-    .guide-eye-shape { width: 64px; height: 36px; border: 2px solid rgba(255, 255, 255, 0.9); border-radius: 50% 50% 45% 45%; background: rgba(255, 255, 255, 0.05); }
-    .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center;}
+    
+    /* Lingkaran Mata Default (Merah) */
+    .guide-eye-shape { width: 64px; height: 36px; border: 2px solid rgba(239, 68, 68, 0.9); border-radius: 50% 50% 45% 45%; background: rgba(239, 68, 68, 0.05); transition: all 0.3s ease; }
+    .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(239, 68, 68, 0.5); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center; transition: all 0.3s ease; }
+    
+    /* Efek Saat Memindai (Scanning - Hijau) */
+    .scanning .guide-svg-wrap svg path { stroke: rgba(34, 197, 94, 0.9); }
+    .scanning .guide-eye-shape { border-color: rgba(34, 197, 94, 0.9); background: rgba(34, 197, 94, 0.2); box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
+    .scanning .guide-tip { background: rgba(34, 197, 94, 0.9); color: #000; font-weight: bold; border-color: #000; }
     
     .btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b, #d4af37); color: #0b1120; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; text-align: center; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); }
     .btn:active { transform: scale(0.98); }
@@ -98,14 +108,14 @@
           <div class="guide-svg-wrap">
             <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
-                    stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-dasharray="6 4" />
+                    stroke-width="2" stroke-dasharray="6 4" />
             </svg>
             <div class="guide-eyes-wrap">
               <div class="guide-eye-shape"></div>
               <div class="guide-eye-shape"></div>
             </div>
           </div>
-          <div class="guide-tip">PENTING: Posisikan mata tepat di dalam dua bulatan agar hasil kacamata pas!</div>
+          <div class="guide-tip">PENTING: Posisikan mata tepat di dalam dua bulatan merah!</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -255,11 +265,11 @@
       }, 35);
     }
 
-    // POSISI DIPATENKAN (HARDCODED) DENGAN PENYESUAIAN RAJA
+    // POSISI DIPATENKAN: Geser Kiri sedikit & Skala diperkecil
     function createTryonCard(frame, photoUrl, isAvoid = false) {
-      const centerX = 49; // Digeser sedikit ke kiri (sebelumnya 50)
-      const centerY = 40; 
-      const frameWidthPercent = 54; // Diperkecil sedikit (sebelumnya 58)
+      const centerX = 49; // 49% (Digeser sedikit ke kiri)
+      const centerY = 40; // 40% (Pas di pangkal hidung/mata panduan)
+      const frameWidthPercent = 54; // 54% (Lebar kacamata sedikit dikecilkan)
       
       const imgSrc = getFrameImageSrc(frame.tipe);
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
@@ -293,6 +303,12 @@
         else return;
       }
 
+      // EFEK HIJAU: Mengubah panduan jadi warna hijau saat memindai
+      const faceGuide = document.getElementById('faceGuide');
+      const guideTip = document.querySelector('.guide-tip');
+      faceGuide.classList.add('scanning');
+      guideTip.innerText = "MENGUNCI POSISI WAJAH...";
+
       playCameraChime();
 
       const maxWidth = 480;
@@ -314,6 +330,7 @@
       resultContainer.style.display = "none";
       startProgress();
 
+      // PROMPT KETAT: Memaksa AI tidak kreatif dalam memberikan nama frame
       const promptText = `Periksa foto wajah ini untuk kebutuhan rekomendasi optik:
 1. DETEKSI KACAMATA:
    - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan isi "deskripsi". Kosongkan frame_cocok dan frame_hindari.
@@ -323,8 +340,10 @@
    - "lebar_frame_ideal": (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
    - "lebar_bridge_hidung": (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
    - "tipe_nosepad": (Pilih: "Nosepad Fleksibel" atau "Fixed Bridge").
-4. PILIHAN FRAME BINGKAI:
-   - "tipe" HANYA boleh diisi: ["oversized", "browline", "geometric", "wayfarer", "cateye", "kotak", "lonjong", "persegi panjang", "bulat"]
+4. PILIHAN FRAME BINGKAI (SANGAT PENTING):
+   - Aturan penamaan: Kamu HARUS menggunakan format "Frame [Nama Tipe]".
+   - Contoh wajib: "Frame Oversized", "Frame Browline", "Frame Geometric", "Frame Wayfarer", "Frame Cateye", "Frame Kotak", "Frame Lonjong", "Frame Persegi Panjang", "Frame Bulat".
+   - DILARANG menambahkan kata sifat seperti "klasik", "sempit", atau "elegan" pada nama frame!
 
 Keluarkan HANYA JSON valid:
 {
@@ -336,13 +355,13 @@ Keluarkan HANYA JSON valid:
   "lebar_bridge_hidung": "[Pilih Lebar Bridge]",
   "tipe_nosepad": "[Pilih Tipe Nosepad]",
   "frame_cocok": [
-    {"nama": "[Tulis Nama Rekomendasi]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
+    {"nama": "Frame [Tipe Baku]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
   ],
   "warna_frame": [
     {"nama": "[Rekomendasi Warna]", "hex": "[#KodeHex]"}
   ],
   "frame_hindari": [
-    {"nama": "[Tulis Nama Hindari]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
+    {"nama": "Frame [Tipe Baku]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
   ]
 }`;
 
@@ -435,6 +454,10 @@ Keluarkan HANYA JSON valid:
         alert(err.message || String(err));
       } finally {
         analyzeBtn.disabled = false;
+        
+        // Mengembalikan warna panduan ke semula (Merah) setelah proses selesai
+        faceGuide.classList.remove('scanning');
+        guideTip.innerText = "PENTING: Posisikan mata tepat di dalam dua bulatan merah!";
       }
     }
   </script>

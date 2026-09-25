@@ -26,30 +26,31 @@
     /* Garis Wajah Default (Putih) */
     .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
     
-    /* PANDUAN KACAMATA (DIBUAT PUTIH TERANG & LEBIH BESAR) */
+    /* PANDUAN KACAMATA (DISESUAIKAN AGAR TERLIHAT LEBIH TIPIS) */
     .guide-glasses-wrap { 
       position: absolute; 
       top: 43%; 
       left: 49%; 
       transform: translate(-50%, -50%); 
-      width: 75%; /* Diperbesar dari 62% agar menjangkau tepi wajah */
+      width: 75%; 
       pointer-events: none; 
     }
     .guide-glasses-wrap img {
       width: 100%;
       height: auto;
-      opacity: 0.8;
-      filter: invert(1) brightness(1.5) drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+      /* Opacity dan brightness diturunkan agar efek tebal bingkai berkurang */
+      opacity: 0.65;
+      filter: invert(1) brightness(1.1) drop-shadow(0 1px 2px rgba(0,0,0,0.4));
       transition: all 0.3s ease;
     }
     
     .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.5); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center; transition: all 0.3s ease; }
     
-    /* Efek Saat Memindai (Scanning - Kacamata Menyala Hijau) */
+    /* Efek Saat Memindai (Scanning) */
     .scanning .guide-svg-wrap svg path.face-line { stroke: rgba(34, 197, 94, 0.9); }
     .scanning .guide-glasses-wrap img { 
-      opacity: 1;
-      filter: invert(1) brightness(1.5) drop-shadow(0 0 15px rgba(34, 197, 94, 1)); 
+      opacity: 0.9;
+      filter: invert(1) brightness(1.2) drop-shadow(0 0 10px rgba(34, 197, 94, 0.8)); 
     }
     .scanning .guide-tip { background: rgba(34, 197, 94, 0.9); color: #000; font-weight: bold; border-color: #000; }
     
@@ -283,20 +284,22 @@
     }
 
     function createTryonCard(frame, photoUrl, isAvoid = false) {
-      // Nilai Default
+      // Nilai Default - Dinaikkan agar posisi kacamata sejajar dengan bola mata
       let centerX = 49; 
-      let centerY = 43; 
+      let centerY = 39; // Dinaikkan dari titik sebelumnya (43)
       let frameWidthPercent = 62; 
       
       const t = (frame.tipe || "").toLowerCase();
       
-      // Penyesuaian ukuran dan posisi per tipe frame
+      // Penyesuaian ukuran dan posisi spesifik per tipe frame
       if (t === "persegi panjang") {
-        centerY = 36; // Dinaikkan lagi ke arah mata (dari 39 ke 36)
+        centerY = 34; // Dinaikkan lebih ekstra untuk model ini
         frameWidthPercent = 56; 
       } else if (t === "oversized") {
-        frameWidthPercent = 75; // Diperbesar jauh lebih lebar untuk efek oversized
-        centerY = 44; 
+        frameWidthPercent = 75; 
+        centerY = 41; // Sedikit dinaikkan
+      } else if (t === "lonjong") {
+        frameWidthPercent = 72; // Diperbesar drastis agar tidak terlihat kekecilan
       }
 
       const imgSrc = getFrameImageSrc(frame.tipe);

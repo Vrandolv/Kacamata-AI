@@ -255,13 +255,11 @@
       }, 35);
     }
 
-    // IDE RAJA: POSISI DIPATENKAN (HARDCODED)
+    // POSISI DIPATENKAN (HARDCODED) DENGAN PENYESUAIAN RAJA
     function createTryonCard(frame, photoUrl, isAvoid = false) {
-      // Posisi dipaku permanen sesuai panduan wajah di kamera (guide-eyes-wrap ada di 38% top)
-      // Kita set top di 40% agar kacamata bertengger sempurna di pangkal hidung
-      const centerX = 50; 
+      const centerX = 49; // Digeser sedikit ke kiri (sebelumnya 50)
       const centerY = 40; 
-      const frameWidthPercent = 58; // Lebar paten yang cocok dengan panduan wajah
+      const frameWidthPercent = 54; // Diperkecil sedikit (sebelumnya 58)
       
       const imgSrc = getFrameImageSrc(frame.tipe);
       const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
@@ -277,7 +275,7 @@
               top: ${centerY}%;
               transform: translate(-50%, -50%);
               ${imgStyle}
-            ">
+            " onerror="this.onerror=null; this.src='Frame/frame kotak plastik.png';">
           </div>
           <div class="tryon-details">
             <div class="tryon-name">${frame.nama}</div>
@@ -316,7 +314,6 @@
       resultContainer.style.display = "none";
       startProgress();
 
-      // PROMPT YANG LEBIH CEPAT: AI tidak perlu lagi pusing menebak koordinat piksel
       const promptText = `Periksa foto wajah ini untuk kebutuhan rekomendasi optik:
 1. DETEKSI KACAMATA:
    - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan isi "deskripsi". Kosongkan frame_cocok dan frame_hindari.

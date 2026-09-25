@@ -26,13 +26,13 @@
     /* Garis Wajah Default (Putih) */
     .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
     
-    /* PANDUAN KACAMATA (DIBUAT PUTIH TERANG) */
+    /* PANDUAN KACAMATA (DIBUAT PUTIH TERANG & LEBIH BESAR) */
     .guide-glasses-wrap { 
       position: absolute; 
       top: 43%; 
       left: 49%; 
       transform: translate(-50%, -50%); 
-      width: 62%; 
+      width: 75%; /* Diperbesar dari 62% agar menjangkau tepi wajah */
       pointer-events: none; 
     }
     .guide-glasses-wrap img {
@@ -244,7 +244,6 @@
     function getFrameImageSrc(type) {
       const t = (type || "").toLowerCase();
       if (t === "oversized") return "Frame/frame oversized plastik.png";
-      // PENYESUAIAN 1: Mendukung penamaan typo "brownline" dari PNG asli
       if (t === "browline" || t === "brownline") return "Frame/frame brownline plastik.png"; 
       if (t === "geometric") return "Frame/frame geometric plastik.png";
       if (t === "wayfarer") return "Frame/frame wayfarer plastik.png";
@@ -291,10 +290,13 @@
       
       const t = (frame.tipe || "").toLowerCase();
       
-      // PENYESUAIAN 2: Jika frame persegi panjang, perkecil ukuran dan naikkan posisinya
+      // Penyesuaian ukuran dan posisi per tipe frame
       if (t === "persegi panjang") {
-        centerY = 39; // Diubah dari 43 (Lebih ke atas)
-        frameWidthPercent = 54; // Diubah dari 62 (Lebih kecil)
+        centerY = 36; // Dinaikkan lagi ke arah mata (dari 39 ke 36)
+        frameWidthPercent = 56; 
+      } else if (t === "oversized") {
+        frameWidthPercent = 75; // Diperbesar jauh lebih lebar untuk efek oversized
+        centerY = 44; 
       }
 
       const imgSrc = getFrameImageSrc(frame.tipe);

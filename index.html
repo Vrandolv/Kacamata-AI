@@ -23,8 +23,9 @@
     .guide-svg-wrap { width: 90%; height: 86%; position: relative; }
     .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
     
-    /* Garis Wajah Default (Putih) */
+    /* Garis Wajah & Garis Bantu (Putih Transparan) */
     .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
+    .guide-svg-wrap svg line.guide-axis { stroke: rgba(255, 255, 255, 0.35); stroke-width: 1.5; stroke-dasharray: 4 4; transition: stroke 0.3s ease; }
     
     /* PANDUAN KACAMATA */
     .guide-glasses-wrap { 
@@ -47,6 +48,7 @@
     
     /* Efek Saat Memindai (Scanning) */
     .scanning .guide-svg-wrap svg path.face-line { stroke: rgba(34, 197, 94, 0.9); }
+    .scanning .guide-svg-wrap svg line.guide-axis { stroke: rgba(34, 197, 94, 0.5); }
     .scanning .guide-glasses-wrap img { 
       opacity: 0.9;
       filter: invert(1) brightness(1.2) drop-shadow(0 0 10px rgba(34, 197, 94, 0.8)); 
@@ -123,6 +125,12 @@
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-svg-wrap">
             <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Garis Vertikal (Tengah Hidung) -->
+              <line class="guide-axis" x1="110" y1="0" x2="110" y2="280" />
+              <!-- Garis Horizontal (Mata) -->
+              <line class="guide-axis" x1="0" y1="120" x2="220" y2="120" />
+              
+              <!-- Garis Kontur Wajah -->
               <path class="face-line" d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
                     stroke-width="2" stroke-dasharray="6 4" />
             </svg>
@@ -284,25 +292,30 @@
 
     function createTryonCard(frame, photoUrl, isAvoid = false) {
       let centerX = 49; 
-      let centerY = 39; 
+      // Default diturunkan sedikit agar lebih pas di mata
+      let centerY = 41; 
       let frameWidthPercent = 62; 
       
       const t = (frame.tipe || "").toLowerCase();
       
       // Penyesuaian ukuran dan posisi spesifik per tipe frame
       if (t === "persegi panjang") {
-        centerX = 48; // Digeser sedikit ke kiri agar berada tepat di tengah wajah
-        centerY = 33; // Dinaikkan sedikit lagi agar pas di mata
-        frameWidthPercent = 56; 
+        centerX = 49; 
+        centerY = 43; // Diturunkan secara drastis agar sejajar dengan mata dan atas telinga
+        frameWidthPercent = 58; 
+      } else if (t === "kotak") {
+        centerY = 43; // Diturunkan agar frame kotak tidak terlalu naik ke dahi
+        frameWidthPercent = 60;
       } else if (t === "oversized") {
         frameWidthPercent = 75; 
-        centerY = 41; 
+        centerY = 42; 
       } else if (t === "lonjong") {
-        frameWidthPercent = 72; 
+        frameWidthPercent = 72;
+        centerY = 41; 
       } else if (t === "wayfarer") {
-        centerY = 42; // Diturunkan sedikit agar ujung kacamata pas menyentuh atas telinga
+        centerY = 42;
       } else if (t === "browline" || t === "brownline") {
-        centerY = 41; // Diturunkan sedikit
+        centerY = 42; 
       }
 
       const imgSrc = getFrameImageSrc(frame.tipe);

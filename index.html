@@ -125,10 +125,19 @@
         <div id="faceGuide" class="face-guide-overlay">
           <div class="guide-svg-wrap">
             <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Garis Vertikal (Tengah Hidung) -->
-              <line class="guide-axis" x1="110" y1="0" x2="110" y2="280" />
-              <!-- Garis Horizontal (Mata) -->
-              <line class="guide-axis" x1="0" y1="120" x2="220" y2="120" />
+              <defs>
+                <!-- Area potong (clip) agar garis bantu tidak melebihi bentuk wajah -->
+                <clipPath id="faceClip">
+                  <path d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" />
+                </clipPath>
+              </defs>
+              
+              <g clip-path="url(#faceClip)">
+                <!-- Garis Vertikal (Tengah Hidung) -->
+                <line class="guide-axis" x1="110" y1="0" x2="110" y2="280" />
+                <!-- Garis Horizontal (Mata) dinaikkan ke y=105 -->
+                <line class="guide-axis" x1="0" y1="105" x2="220" y2="105" />
+              </g>
               
               <!-- Garis Kontur Wajah -->
               <path class="face-line" d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
@@ -140,7 +149,7 @@
             <img src="Frame/frame kotak plastik.png" alt="Panduan" onerror="this.style.display='none'">
           </div>
 
-          <div class="guide-tip">PENTING: Paskan bayangan kacamata putih di area mata & hidungmu!</div>
+          <div class="guide-tip">Paskan Posisi Wajahmu!</div>
         </div>
       </div>
       <canvas id="canvas"></canvas>
@@ -292,19 +301,17 @@
 
     function createTryonCard(frame, photoUrl, isAvoid = false) {
       let centerX = 49; 
-      // Default diturunkan sedikit agar lebih pas di mata
       let centerY = 41; 
       let frameWidthPercent = 62; 
       
       const t = (frame.tipe || "").toLowerCase();
       
-      // Penyesuaian ukuran dan posisi spesifik per tipe frame
       if (t === "persegi panjang") {
         centerX = 49; 
-        centerY = 43; // Diturunkan secara drastis agar sejajar dengan mata dan atas telinga
+        centerY = 43; 
         frameWidthPercent = 58; 
       } else if (t === "kotak") {
-        centerY = 43; // Diturunkan agar frame kotak tidak terlalu naik ke dahi
+        centerY = 43; 
         frameWidthPercent = 60;
       } else if (t === "oversized") {
         frameWidthPercent = 75; 
@@ -353,7 +360,7 @@
       const faceGuide = document.getElementById('faceGuide');
       const guideTip = document.querySelector('.guide-tip');
       faceGuide.classList.add('scanning');
-      guideTip.innerText = "MENGUNCI POSISI WAJAH...";
+      guideTip.innerText = "MENGUNCI POSISI...";
 
       playCameraChime();
 
@@ -500,7 +507,7 @@ Keluarkan HANYA JSON valid:
       } finally {
         analyzeBtn.disabled = false;
         faceGuide.classList.remove('scanning');
-        guideTip.innerText = "PENTING: Paskan bayangan kacamata putih di area mata & hidungmu!";
+        guideTip.innerText = "Paskan Posisi Wajahmu!";
       }
     }
   </script>

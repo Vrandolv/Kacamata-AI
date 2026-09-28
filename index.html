@@ -301,17 +301,18 @@
 
     function createTryonCard(frame, photoUrl, isAvoid = false) {
       let centerX = 49; 
-      let centerY = 41; 
-      let frameWidthPercent = 62; 
+      let centerY = 41; // Default posisi Y
+      let frameWidthPercent = 62; // Default lebar
       
       const t = (frame.tipe || "").toLowerCase();
       
+      // REVISI POSISI FRAME
       if (t === "persegi panjang") {
         centerX = 49; 
-        centerY = 43; 
-        frameWidthPercent = 58; 
+        centerY = 38; // <- REVISI: Diturunkan dari 43 ke 38 agar frame naik ke posisi mata
+        frameWidthPercent = 64; // <- REVISI: Dinaikkan dari 58 ke 64 agar lebar frame pas di pelipis
       } else if (t === "kotak") {
-        centerY = 43; 
+        centerY = 40; // <- REVISI: Dinaikkan sedikit dari 43 ke 40 agar lebih pas di mata
         frameWidthPercent = 60;
       } else if (t === "oversized") {
         frameWidthPercent = 75; 
@@ -320,9 +321,9 @@
         frameWidthPercent = 72;
         centerY = 41; 
       } else if (t === "wayfarer") {
-        centerY = 42;
+        centerY = 41;
       } else if (t === "browline" || t === "brownline") {
-        centerY = 42; 
+        centerY = 41; 
       }
 
       const imgSrc = getFrameImageSrc(frame.tipe);

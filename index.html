@@ -10,24 +10,57 @@
     .container { width: 100%; max-width: 480px; }
     .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
     
-    .brand-header { display: flex; align-items: center; justify-content: center; width: 100%; margin: 4px 0 14px; }
+    .brand-header { display: flex; align-items: center; justify-content: center; width: 100%; margin: 4px 0 12px; }
     .brand-logo { height: 32px; width: auto; object-fit: contain; margin-right: -6px; display: block; }
     .brand-title { margin: 0; color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; line-height: 1; display: block; }
     
+    /* NAVIGASI TAB */
+    .tab-navigation {
+      display: flex;
+      background: #0f172a;
+      border-radius: 14px;
+      padding: 4px;
+      gap: 6px;
+      margin-bottom: 14px;
+      border: 1px solid #334155;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #f59e0b, #d4af37);
+      color: #0b1120;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.35);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* STYLING TRY-ON */
     .mirror-box { width: 100%; height: 52vh; min-height: 360px; border-radius: 16px; overflow: hidden; background: #000; border: 2px solid #d4af37; box-shadow: 0 0 15px rgba(212, 175, 55, 0.25); position: relative; }
     video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
     canvas { display: none; }
 
-    /* PANDUAN WAJAH & KACAMATA PUTIH */
     .face-guide-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .guide-svg-wrap { width: 90%; height: 86%; position: relative; }
     .guide-svg-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
     
-    /* Garis Wajah & Garis Bantu (Putih Transparan) */
     .guide-svg-wrap svg path.face-line { stroke: rgba(255, 255, 255, 0.85); transition: stroke 0.3s ease; }
     .guide-svg-wrap svg line.guide-axis { stroke: rgba(255, 255, 255, 0.35); stroke-width: 1.5; stroke-dasharray: 4 4; transition: stroke 0.3s ease; }
     
-    /* PANDUAN KACAMATA */
     .guide-glasses-wrap { 
       position: absolute; 
       top: 43%; 
@@ -46,11 +79,10 @@
     
     .guide-tip { position: absolute; bottom: 12px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.5); padding: 5px 14px; border-radius: 20px; font-size: 11px; color: #ffffff; text-align: center; transition: all 0.3s ease; }
     
-    /* Efek Saat Memindai (Scanning) */
     .scanning .guide-svg-wrap svg path.face-line { stroke: rgba(34, 197, 94, 0.9); }
     .scanning .guide-svg-wrap svg line.guide-axis { stroke: rgba(34, 197, 94, 0.5); }
     .scanning .guide-glasses-wrap img { 
-      opacity: 0.9;
+      opacity: 0.9; 
       filter: invert(1) brightness(1.2) drop-shadow(0 0 10px rgba(34, 197, 94, 0.8)); 
     }
     .scanning .guide-tip { background: rgba(34, 197, 94, 0.9); color: #000; font-weight: bold; border-color: #000; }
@@ -109,6 +141,110 @@
     .colors-grid { display: flex; flex-wrap: wrap; gap: 8px; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
     .color-chip { display: flex; align-items: center; background: #1e293b; padding: 6px 10px; border-radius: 20px; font-size: 12px; border: 1px solid #475569; }
     .color-dot { width: 16px; height: 16px; border-radius: 50%; margin-right: 6px; border: 1px solid #64748b; flex-shrink: 0; }
+
+    /* STYLING TAB RESEP */
+    .resep-search-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 16px;
+      border-radius: 16px;
+      text-align: center;
+    }
+    .resep-input-wrap {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .resep-input {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      outline: none;
+      letter-spacing: 1px;
+    }
+    .resep-input:focus { border-color: #d4af37; }
+    .resep-search-btn {
+      background: linear-gradient(135deg, #f59e0b, #d4af37);
+      color: #0b1120;
+      border: none;
+      padding: 0 18px;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .resep-card {
+      display: none;
+      margin-top: 14px;
+      background: #0f172a;
+      border: 1px solid #d4af37;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .resep-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .badge-status {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .table-resep {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 13px;
+      margin: 10px 0;
+    }
+    .table-resep th {
+      background: #1e293b;
+      color: #94a3b8;
+      padding: 8px;
+      border: 1px solid #334155;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .table-resep td {
+      padding: 8px;
+      border: 1px solid #334155;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+    .histori-item {
+      padding: 8px 10px;
+      background: #1e293b;
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+    }
+    .btn-wa-action {
+      display: block;
+      width: 100%;
+      background: #22c55e;
+      color: #052e16;
+      text-decoration: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -120,94 +256,305 @@
         <span class="brand-title">VRANDOLV</span>
       </div>
 
-      <div class="mirror-box">
-        <video id="video" autoplay playsinline muted></video>
-        <div id="faceGuide" class="face-guide-overlay">
-          <div class="guide-svg-wrap">
-            <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <clipPath id="faceClip">
-                  <path d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" />
-                </clipPath>
-              </defs>
-              
-              <g clip-path="url(#faceClip)">
-                <!-- Garis Vertikal (Tengah Hidung) -->
-                <line class="guide-axis" x1="110" y1="0" x2="110" y2="280" />
-                <!-- Garis Horizontal (Mata) -->
-                <line class="guide-axis" x1="0" y1="105" x2="220" y2="105" />
-              </g>
-              
-              <!-- Garis Kontur Wajah -->
-              <path class="face-line" d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
-                    stroke-width="2" stroke-dasharray="6 4" />
-            </svg>
+      <!-- NAVIGASI DUA TAB -->
+      <div class="tab-navigation">
+        <button id="tabBtnTryOn" class="tab-btn active" onclick="switchTab('tryon')">
+          👓 Virtual Try-On
+        </button>
+        <button id="tabBtnResep" class="tab-btn" onclick="switchTab('resep')">
+          📄 Cek Resep Kacamata
+        </button>
+      </div>
+
+      <!-- ================= TAB 1: VIRTUAL TRY-ON ================= -->
+      <div id="tabTryOn" class="tab-content active">
+        <div class="mirror-box">
+          <video id="video" autoplay playsinline muted></video>
+          <div id="faceGuide" class="face-guide-overlay">
+            <div class="guide-svg-wrap">
+              <svg viewBox="0 0 220 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <clipPath id="faceClip">
+                    <path d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" />
+                  </clipPath>
+                </defs>
+                <g clip-path="url(#faceClip)">
+                  <line class="guide-axis" x1="110" y1="0" x2="110" y2="280" />
+                  <line class="guide-axis" x1="0" y1="105" x2="220" y2="105" />
+                </g>
+                <path class="face-line" d="M 110,12 C 195,12 208,95 192,185 C 178,248 145,268 110,268 C 75,268 42,248 28,185 C 12,95 25,12 110,12 Z" 
+                      stroke-width="2" stroke-dasharray="6 4" />
+              </svg>
+            </div>
+            
+            <div class="guide-glasses-wrap">
+              <img src="Frame/frame kotak plastik.png" alt="Panduan" onerror="this.style.display='none'">
+            </div>
+
+            <div class="guide-tip">Paskan Posisi Wajahmu!</div>
           </div>
-          
-          <div class="guide-glasses-wrap">
-            <img src="Frame/frame kotak plastik.png" alt="Panduan" onerror="this.style.display='none'">
+        </div>
+        <canvas id="canvas"></canvas>
+
+        <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
+        
+        <div id="progressBox" class="progress-box">
+          <div class="progress-labels">
+            <span id="progressText" class="progress-text">Memeriksa posisi wajah...</span>
+            <span id="progressPercent" class="progress-percent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </div>
+        
+        <div id="resultContainer" class="result-container">
+          <div class="metrics-grid">
+            <div class="metric-badge">
+              <div class="metric-title">Bentuk Wajah</div>
+              <div id="resFaceShape" class="metric-value">-</div>
+            </div>
+            <div class="metric-badge">
+              <div class="metric-title">Tone Kulit</div>
+              <div id="resSkinTone" class="metric-value">-</div>
+            </div>
+            <div class="metric-badge">
+              <div class="metric-title">Lebar Frame Ideal</div>
+              <div id="resFrameWidth" class="metric-value">-</div>
+            </div>
+            <div class="metric-badge">
+              <div class="metric-title">Lebar Bridge Hidung</div>
+              <div id="resBridgeWidth" class="metric-value">-</div>
+            </div>
+            <div class="metric-badge full-span">
+              <div class="metric-title">Tipe Bantalan Hidung (Nosepad)</div>
+              <div id="resNosepadType" class="metric-value">-</div>
+            </div>
           </div>
 
-          <div class="guide-tip">Paskan Posisi Wajahmu!</div>
+          <div id="currentGlassesContainer"></div>
+
+          <div id="tryonSection" style="display: none;">
+            <div class="section-title">✨ Rekomendasi Frame</div>
+            <div id="matchFramesSlider" class="carousel-slider"></div>
+          </div>
+
+          <div class="section-title">🎨 Rekomendasi Warna Frame</div>
+          <div id="colorsList" class="colors-grid"></div>
+
+          <div id="avoidSection" style="display: none;">
+            <div class="section-title" style="color: #f87171;">🚫 Frame Dihindari</div>
+            <div id="avoidFramesSlider" class="carousel-slider"></div>
+          </div>
         </div>
       </div>
-      <canvas id="canvas"></canvas>
 
-      <button id="analyzeBtn" class="btn" onclick="captureAndAnalyze()">Mulai Analisis</button>
-      
-      <div id="progressBox" class="progress-box">
-        <div class="progress-labels">
-          <span id="progressText" class="progress-text">Memeriksa posisi wajah...</span>
-          <span id="progressPercent" class="progress-percent">0%</span>
+      <!-- ================= TAB 2: CEK RESEP KACAMATA ================= -->
+      <div id="tabResep" class="tab-content">
+        <div class="resep-search-box">
+          <div style="font-size: 14px; font-weight: 700; color: #fbbf24; margin-bottom: 4px;">Pencarian Resep Pasien</div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.4;">
+            Masukkan Kode Unik pada kartu atau nota kacamata Anda untuk melihat data ukuran resep.
+          </div>
+          <div class="resep-input-wrap">
+            <input type="text" id="inputKode" class="resep-input" placeholder="Contoh: VR-108" autocomplete="off">
+            <button class="resep-search-btn" onclick="cariResep()">CARI</button>
+          </div>
         </div>
-        <div class="progress-track">
-          <div id="progressBar" class="progress-bar"></div>
+
+        <!-- HASIL DATA RESEP -->
+        <div id="resepResultCard" class="resep-card">
+          <div class="resep-header">
+            <div>
+              <div id="patientName" style="font-size: 15px; font-weight: 800; color: #ffffff;">-</div>
+              <div id="patientCode" style="font-size: 11px; color: #94a3b8;">-</div>
+            </div>
+            <div id="statusBadge" class="badge-status">-</div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; color: #d4af37; margin-bottom: 6px;">UKURAN LENSA TERAKHIR</div>
+          <table class="table-resep">
+            <thead>
+              <tr>
+                <th>Mata</th>
+                <th>SPH</th>
+                <th>CYL</th>
+                <th>AXIS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Kanan (R)</td>
+                <td id="valRSph">-</td>
+                <td id="valRCyl">-</td>
+                <td id="valRAxis">-</td>
+              </tr>
+              <tr>
+                <td>Kiri (L)</td>
+                <td id="valLSph">-</td>
+                <td id="valLCyl">-</td>
+                <td id="valLAxis">-</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="background: #1e293b; padding: 10px; border-radius: 10px; font-size: 12px; margin-top: 10px; border: 1px solid #334155;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="color: #94a3b8;">Tipe Lensa:</span>
+              <span id="valLensa" style="font-weight: 700; color: #fbbf24;">-</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="color: #94a3b8;">Model Frame:</span>
+              <span id="valFrame" style="font-weight: 700; color: #f8fafc;">-</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Tanggal Periksa:</span>
+              <span id="valTgl" style="font-weight: 600; color: #cbd5e1;">-</span>
+            </div>
+          </div>
+
+          <!-- HISTORI KUNJUNGAN TERDAHULU -->
+          <div id="historiSection" style="margin-top: 14px;">
+            <div style="font-size: 12px; font-weight: 700; color: #94a3b8; margin-bottom: 6px;">RIWAYAT PEMERIKSAAN SEBELUMNYA</div>
+            <div id="historiList"></div>
+          </div>
+
+          <a id="btnWaChat" class="btn-wa-action" target="_blank" href="#">
+            💬 Konsultasi / Pesan Lensa Baru via WhatsApp
+          </a>
         </div>
       </div>
-      
-      <div id="resultContainer" class="result-container">
-        <div class="metrics-grid">
-          <div class="metric-badge">
-            <div class="metric-title">Bentuk Wajah</div>
-            <div id="resFaceShape" class="metric-value">-</div>
-          </div>
-          <div class="metric-badge">
-            <div class="metric-title">Tone Kulit</div>
-            <div id="resSkinTone" class="metric-value">-</div>
-          </div>
-          <div class="metric-badge">
-            <div class="metric-title">Lebar Frame Ideal</div>
-            <div id="resFrameWidth" class="metric-value">-</div>
-          </div>
-          <div class="metric-badge">
-            <div class="metric-title">Lebar Bridge Hidung</div>
-            <div id="resBridgeWidth" class="metric-value">-</div>
-          </div>
-          <div class="metric-badge full-span">
-            <div class="metric-title">Tipe Bantalan Hidung (Nosepad)</div>
-            <div id="resNosepadType" class="metric-value">-</div>
-          </div>
-        </div>
 
-        <div id="currentGlassesContainer"></div>
-
-        <div id="tryonSection" style="display: none;">
-          <div class="section-title">✨ Rekomendasi Frame</div>
-          <div id="matchFramesSlider" class="carousel-slider"></div>
-        </div>
-
-        <div class="section-title">🎨 Rekomendasi Warna Frame</div>
-        <div id="colorsList" class="colors-grid"></div>
-
-        <div id="avoidSection" style="display: none;">
-          <div class="section-title" style="color: #f87171;">🚫 Frame Dihindari</div>
-          <div id="avoidFramesSlider" class="carousel-slider"></div>
-        </div>
-      </div>
     </div>
   </div>
 
   <script>
+    // FUNGSI GANTI TAB
+    function switchTab(tab) {
+      const tabTryOn = document.getElementById('tabTryOn');
+      const tabResep = document.getElementById('tabResep');
+      const btnTryOn = document.getElementById('tabBtnTryOn');
+      const btnResep = document.getElementById('tabBtnResep');
+
+      if (tab === 'tryon') {
+        tabTryOn.classList.add('active');
+        tabResep.classList.remove('active');
+        btnTryOn.classList.add('active');
+        btnResep.classList.remove('active');
+      } else {
+        tabResep.classList.add('active');
+        tabTryOn.classList.remove('active');
+        btnResep.classList.add('active');
+        btnTryOn.classList.remove('active');
+      }
+    }
+
+    // FUNGSI CARI RESEP (INTEGRASI GOOGLE APPS SCRIPT DARI GOOGLE SHEETS / APPSHEET)
+    function cariResep() {
+      const kode = document.getElementById('inputKode').value.trim().toUpperCase();
+      if (!kode) {
+        alert("Silakan masukkan Kode Resep Anda.");
+        return;
+      }
+
+      // Ganti URL di bawah dengan Web App URL Google Apps Script yang kamu deploy
+      const SCRIPT_URL = "URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI";
+
+      // Placeholder data jika belum disambungkan ke Apps Script asli (untuk tes tampilan langsung)
+      if (SCRIPT_URL === "URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI") {
+        tampilkanDataResep({
+          status: "success",
+          nama: "Pelanggan Resep",
+          kode: kode,
+          terakhir: {
+            tanggal: "2026-03-10",
+            r_sph: "-1.75",
+            r_cyl: "-0.50",
+            r_axis: "180°",
+            l_sph: "-2.00",
+            l_cyl: "0.00",
+            l_axis: "-",
+            lensa: "Superseen Photocromic",
+            frame: "Aviator Titanium Black"
+          },
+          histori: [
+            { tanggal: "2025-02-15", r_sph: "-1.25", l_sph: "-1.50", frame: "Kotak Acetate 52-18" }
+          ]
+        });
+        return;
+      }
+
+      fetch(`${SCRIPT_URL}?kode=${encodeURIComponent(kode)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.status === "success") {
+            tampilkanDataResep(data);
+          } else {
+            alert("Kode unik tidak ditemukan. Pastikan nomor resep sudah sesuai.");
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Gagal mengambil data resep. Periksa koneksi internet.");
+        });
+    }
+
+    function tampilkanDataResep(data) {
+      const card = document.getElementById('resepResultCard');
+      card.style.display = 'block';
+
+      document.getElementById('patientName').innerText = data.nama;
+      document.getElementById('patientCode').innerText = "KODE: " + data.kode;
+      document.getElementById('valRSph').innerText = data.terakhir.r_sph;
+      document.getElementById('valRCyl').innerText = data.terakhir.r_cyl;
+      document.getElementById('valRAxis').innerText = data.terakhir.r_axis;
+      document.getElementById('valLSph').innerText = data.terakhir.l_sph;
+      document.getElementById('valLCyl').innerText = data.terakhir.l_cyl;
+      document.getElementById('valLAxis').innerText = data.terakhir.l_axis;
+      document.getElementById('valLensa').innerText = data.terakhir.lensa;
+      document.getElementById('valFrame').innerText = data.terakhir.frame;
+      document.getElementById('valTgl').innerText = data.terakhir.tanggal;
+
+      // Cek Status Validitas Resep (> 365 hari = perlu cek ulang)
+      const tglPeriksa = new Date(data.terakhir.tanggal);
+      const selisihHari = (new Date() - tglPeriksa) / (1000 * 60 * 60 * 24);
+      const badge = document.getElementById('statusBadge');
+      
+      if (selisihHari > 365) {
+        badge.innerText = "Perlu Cek Ulang";
+        badge.style.background = "rgba(239, 68, 68, 0.2)";
+        badge.style.color = "#f87171";
+        badge.style.border = "1px solid #ef4444";
+      } else {
+        badge.innerText = "Resep Aktif";
+        badge.style.background = "rgba(34, 197, 94, 0.2)";
+        badge.style.color = "#4ade80";
+        badge.style.border = "1px solid #22c55e";
+      }
+
+      // Render Riwayat Pemeriksaan Terdahulu
+      const historiBox = document.getElementById('historiList');
+      if (data.histori && data.histori.length > 0) {
+        let hHtml = "";
+        data.histori.forEach(item => {
+          hHtml += `
+            <div class="histori-item">
+              <span style="color: #fbbf24; font-weight:700;">${item.tanggal}</span> • 
+              R: <b>${item.r_sph}</b> | L: <b>${item.l_sph}</b> • Frame: <i>${item.frame}</i>
+            </div>`;
+        });
+        historiBox.innerHTML = hHtml;
+      } else {
+        historiBox.innerHTML = "<div class='histori-item' style='color:#64748b;'>Belum ada histori kunjungan sebelumnya.</div>";
+      }
+
+      // Link WA Konsultasi Otomatis
+      const nomorWa = "6282187307030";
+      const pesan = `Halo Vrandolv, saya ingin konsultasi kacamata dengan Kode Resep: ${data.kode} (an. ${data.nama})`;
+      document.getElementById('btnWaChat').href = `https://wa.me/${nomorWa}?text=${encodeURIComponent(pesan)}`;
+    }
+
+    // ================= SCRIPT ASLI VIRTUAL TRY-ON =================
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const analyzeBtn = document.getElementById('analyzeBtn');
@@ -263,259 +610,4 @@
       if (t === "browline" || t === "brownline") return "Frame/frame brownline plastik.png"; 
       if (t === "geometric") return "Frame/frame geometric plastik.png";
       if (t === "wayfarer") return "Frame/frame wayfarer plastik.png";
-      if (t === "cateye") return "Frame/frame cateye plastik.png";
-      if (t === "kotak") return "Frame/frame kotak plastik.png";
-      if (t === "lonjong") return "Frame/frame lonjong plastik.png";
-      if (t === "persegi panjang") return "Frame/frame persegi panjang plastik.png";
-      if (t === "bulat") return "Frame/frame bulat plastik.png";
-      return "Frame/frame kotak plastik.png";
-    }
-
-    function setProgressBar(percent) {
-      progressBar.style.width = percent + "%";
-      progressPercent.innerText = Math.round(percent) + "%";
-      if (percent < 20) progressText.innerText = "Memeriksa pencahayaan & kontur wajah...";
-      else if (percent < 50) progressText.innerText = "Menganalisis profil optik & skin tone...";
-      else if (percent < 80) progressText.innerText = "Memilih model frame yang proporsional...";
-      else progressText.innerText = "Menyelesaikan kurasi rekomendasi...";
-    }
-
-    function startProgress() {
-      progressBox.style.display = "block";
-      currentVal = 0;
-      setProgressBar(0);
-      clearInterval(progressInterval);
-      progressInterval = setInterval(() => {
-        if (currentVal < 88) { currentVal += 0.55; setProgressBar(currentVal); }
-      }, 90);
-    }
-
-    function finishProgress(callback) {
-      clearInterval(progressInterval);
-      const finishTimer = setInterval(() => {
-        if (currentVal < 100) { currentVal += 1.2; setProgressBar(Math.min(100, currentVal)); } 
-        else { clearInterval(finishTimer); setTimeout(() => { progressBox.style.display = "none"; if (callback) callback(); }, 350); }
-      }, 35);
-    }
-
-    function createTryonCard(frame, photoUrl, isAvoid = false) {
-      let centerX = 49; 
-      let centerY = 37; 
-      let frameWidthPercent = 65; 
-      
-      const t = (frame.tipe || "").toLowerCase();
-      
-      // REVISI POSISI & UKURAN MENGGUNAKAN TITIK PUSAT OBJEK (CENTER OF OBJECT)
-      if (t === "persegi panjang") {
-        centerX = 49; 
-        centerY = 34; // Dinaikkan dari 38 ke 34 agar tepat sejajar di pupil mata
-        frameWidthPercent = 65; 
-      } else if (t === "lonjong") {
-        centerX = 49;
-        centerY = 36.5; 
-        frameWidthPercent = 78; // Diperbesar dari 72 ke 78 agar pas menutup area mata
-      } else if (t === "kotak") {
-        centerY = 36;
-        frameWidthPercent = 62;
-      } else if (t === "oversized") {
-        frameWidthPercent = 78; 
-        centerY = 37; 
-      } else if (t === "wayfarer") {
-        centerY = 36;
-        frameWidthPercent = 64;
-      } else if (t === "browline" || t === "brownline") {
-        centerY = 36; 
-        frameWidthPercent = 63;
-      } else if (t === "bulat" || t === "round") {
-        centerY = 36.5;
-        frameWidthPercent = 68;
-      }
-
-      const imgSrc = getFrameImageSrc(frame.tipe);
-      const imgStyle = isAvoid ? "filter: grayscale(0.5) opacity(0.8);" : "";
-
-      return `
-        <div class="tryon-card ${isAvoid ? 'avoid' : ''}">
-          <div class="tryon-image-wrap">
-            <img src="${photoUrl}" class="face-shot" alt="Wajah">
-            <img src="${imgSrc}" class="tryon-glasses-front" alt="Kacamata" style="
-              width: ${frameWidthPercent}%;
-              height: auto;
-              left: ${centerX}%;
-              top: ${centerY}%;
-              transform: translate(-50%, -50%);
-              ${imgStyle}
-            " onerror="this.onerror=null; this.src='Frame/frame kotak plastik.png';">
-          </div>
-          <div class="tryon-details">
-            <div class="tryon-name">${frame.nama}</div>
-            <div class="tryon-desc">${frame.alasan}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    async function captureAndAnalyze() {
-      let apiKey = localStorage.getItem("gemini_api_key");
-      if (!apiKey) {
-        apiKey = prompt("Masukkan API Key Gemini:");
-        if (apiKey) localStorage.setItem("gemini_api_key", apiKey.trim());
-        else return;
-      }
-
-      const faceGuide = document.getElementById('faceGuide');
-      const guideTip = document.querySelector('.guide-tip');
-      faceGuide.classList.add('scanning');
-      guideTip.innerText = "MENGUNCI POSISI...";
-
-      playCameraChime();
-
-      const maxWidth = 480;
-      const originalWidth = video.videoWidth || 720;
-      const originalHeight = video.videoHeight || 960;
-      const scale = maxWidth / originalWidth;
-
-      canvas.width = maxWidth;
-      canvas.height = originalHeight * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.translate(canvas.width, 0);
-      ctx.scale(-1, 1);
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      capturedPhotoUrl = canvas.toDataURL('image/jpeg', 0.75);
-      const base64Image = capturedPhotoUrl.split(',')[1];
-
-      analyzeBtn.disabled = true;
-      resultContainer.style.display = "none";
-      startProgress();
-
-      const promptText = `Periksa foto wajah ini untuk kebutuhan rekomendasi optik:
-1. DETEKSI KACAMATA:
-   - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan isi "deskripsi". Kosongkan frame_cocok dan frame_hindari.
-   - JIKA TIDAK: Set "sedang_memakai_kacamata": false, isi frame_cocok dan frame_hindari.
-2. BENTUK WAJAH & TONE KULIT: Klasifikasikan secara objektif (misal: Oval, Persegi, dll).
-3. PARAMETER SPESIFIKASI:
-   - "lebar_frame_ideal": (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
-   - "lebar_bridge_hidung": (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
-   - "tipe_nosepad": (Pilih: "Nosepad Fleksibel" atau "Fixed Bridge").
-4. PILIHAN FRAME BINGKAI (SANGAT PENTING):
-   - Aturan penamaan: Kamu HARUS menggunakan format "Frame [Nama Tipe]".
-   - Contoh wajib: "Frame Oversized", "Frame Browline", "Frame Geometric", "Frame Wayfarer", "Frame Cateye", "Frame Kotak", "Frame Lonjong", "Frame Persegi Panjang", "Frame Bulat".
-   - DILARANG menambahkan kata sifat seperti "klasik", "sempit", atau "elegan" pada nama frame!
-
-Keluarkan HANYA JSON valid:
-{
-  "sedang_memakai_kacamata": false,
-  "evaluasi_kacamata_sekarang": null,
-  "bentuk_wajah": "[Nama Bentuk]",
-  "tone_kulit": "[Nama Tone]",
-  "lebar_frame_ideal": "[Pilih S/M/L]",
-  "lebar_bridge_hidung": "[Pilih Lebar Bridge]",
-  "tipe_nosepad": "[Pilih Tipe Nosepad]",
-  "frame_cocok": [
-    {"nama": "Frame [Tipe Baku]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
-  ],
-  "warna_frame": [
-    {"nama": "[Rekomendasi Warna]", "hex": "[#KodeHex]"}
-  ],
-  "frame_hindari": [
-    {"nama": "Frame [Tipe Baku]", "tipe": "[Pilih Tipe Valid]", "alasan": "[Alasan spesifik]"}
-  ]
-}`;
-
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [ { text: promptText }, { inlineData: { mimeType: "image/jpeg", data: base64Image } } ] }],
-            generationConfig: { responseMimeType: "application/json", temperature: 0.1 }
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          clearInterval(progressInterval);
-          progressBox.style.display = "none";
-          if (data.error.code === 429) {
-            if (confirm("Batas API Key tercapai. Masukkan API Key baru?")) {
-              localStorage.removeItem("gemini_api_key");
-            }
-          } else {
-            alert("Error: " + data.error.message);
-          }
-          return;
-        }
-
-        const rawText = data.candidates[0].content.parts[0].text;
-        const res = JSON.parse(rawText);
-
-        finishProgress(() => {
-          document.getElementById('resFaceShape').innerText = res.bentuk_wajah || "-";
-          document.getElementById('resSkinTone').innerText = res.tone_kulit || "-";
-          document.getElementById('resFrameWidth').innerText = res.lebar_frame_ideal || "-";
-          document.getElementById('resBridgeWidth').innerText = res.lebar_bridge_hidung || "-";
-          document.getElementById('resNosepadType').innerText = res.tipe_nosepad || "-";
-
-          if (res.sedang_memakai_kacamata && res.evaluasi_kacamata_sekarang) {
-            tryonSection.style.display = "none";
-            avoidSection.style.display = "none";
-            const evalData = res.evaluasi_kacamata_sekarang;
-            currentGlassesContainer.innerHTML = `
-              <div class="current-glasses-card">
-                <div class="cg-top">
-                  <span class="cg-status">Kacamata Saat Ini</span>
-                  <span class="cg-score-pill">Kecocokan: ${evalData.skor_cocok || 0}%</span>
-                </div>
-                <div class="cg-content">
-                  <img src="${capturedPhotoUrl}" class="cg-thumb" alt="Kacamata Terpakai">
-                  <p class="cg-eval">${evalData.deskripsi || ""}</p>
-                </div>
-              </div>`;
-            currentGlassesContainer.style.display = "block";
-          } else {
-            currentGlassesContainer.innerHTML = "";
-            currentGlassesContainer.style.display = "none";
-
-            let matchSliderHtml = "";
-            (res.frame_cocok || []).forEach(f => {
-              matchSliderHtml += createTryonCard(f, capturedPhotoUrl, false);
-            });
-            document.getElementById('matchFramesSlider').innerHTML = matchSliderHtml;
-            tryonSection.style.display = (res.frame_cocok && res.frame_cocok.length > 0) ? "block" : "none";
-
-            let avoidSliderHtml = "";
-            (res.frame_hindari || []).forEach(f => {
-              avoidSliderHtml += createTryonCard(f, capturedPhotoUrl, true);
-            });
-            document.getElementById('avoidFramesSlider').innerHTML = avoidSliderHtml;
-            avoidSection.style.display = (res.frame_hindari && res.frame_hindari.length > 0) ? "block" : "none";
-          }
-
-          let colorsHtml = "";
-          (res.warna_frame || []).forEach(c => {
-            colorsHtml += `
-              <div class="color-chip">
-                <span class="color-dot" style="background: ${c.hex || '#d4af37'};"></span>
-                <span>${c.nama}</span>
-              </div>`;
-          });
-          document.getElementById('colorsList').innerHTML = colorsHtml;
-
-          resultContainer.style.display = "block";
-        });
-      } catch (err) {
-        clearInterval(progressInterval);
-        progressBox.style.display = "none";
-        console.error(err);
-        alert(err.message || String(err));
-      } finally {
-        analyzeBtn.disabled = false;
-        faceGuide.classList.remove('scanning');
-        guideTip.innerText = "Paskan Posisi Wajahmu!";
-      }
-    }
-  </script>
-</body>
-</html>
+      if (t === "cateye") return "Frame/frame cate

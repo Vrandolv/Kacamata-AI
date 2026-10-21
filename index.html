@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VRANDOLV</title>
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    * { 
+      box-sizing: border-box; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    }
     body { background-color: #0b1120; margin: 0; padding: 12px; color: #f8fafc; display: flex; justify-content: center; }
     .container { width: 100%; max-width: 480px; }
     .card { background: #1e293b; border-radius: 20px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
@@ -353,13 +356,34 @@
         <div class="resep-search-box">
           <div style="font-size: 15px; font-weight: 800; color: #fbbf24; margin-bottom: 6px;">Lihat Riwayat & Ukuran Resep</div>
           <div style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
-            Masukkan Kode Unik untuk membuka ukuran minus, plus, silinder, serta riwayat kacamata lama.<br>
-            <span style="color: #64748b; font-size: 11px;">(Belum punya kode? Silakan minta ke Admin Vrandolv)</span>
+            Masukkan Kode Unik untuk membuka rincian ukuran minus, plus, silinder, serta riwayat kacamata Anda.
           </div>
+          
           <div class="resep-input-wrap">
             <input type="text" id="inputKode" class="resep-input" placeholder="CONTOH: VR-108" autocomplete="off">
             <button class="resep-search-btn" onclick="cariResep()">CARI</button>
           </div>
+
+          <!-- GARIS PEMBATAS HALUS -->
+          <div style="margin: 16px 0 12px; border-top: 1px dashed #334155;"></div>
+
+          <!-- TOMBOL DAPATKAN KODE RESEP (BEBAS LOGO / TANPA SEBUT ADMIN) -->
+          <a href="https://mayar.link/p/biaya-resep" target="_blank" style="
+            display: block;
+            width: 100%;
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid #d4af37;
+            padding: 11px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.2s;
+          ">
+            Dapatkan Kode Resep
+          </a>
         </div>
 
         <!-- HASIL DATA RESEP -->
@@ -736,17 +760,17 @@
 
       const promptText = `Periksa foto wajah ini untuk kebutuhan rekomendasi optik:
 1. DETEKSI KACAMATA:
-   - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan isi "deskripsi". Kosongkan frame_cocok dan frame_hindari.
-   - JIKA TIDAK: Set "sedang_memakai_kacamata": false, isi frame_cocok dan frame_hindari.
+  - JIKA MEMAKAI: Set "sedang_memakai_kacamata": true, hitung "skor_cocok" (0-100), dan isi "deskripsi". Kosongkan frame_cocok dan frame_hindari.
+  - JIKA TIDAK: Set "sedang_memakai_kacamata": false, isi frame_cocok dan frame_hindari.
 2. BENTUK WAJAH & TONE KULIT: Klasifikasikan secara objektif (misal: Oval, Persegi, dll).
 3. PARAMETER SPESIFIKASI:
-   - "lebar_frame_ideal": (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
-   - "lebar_bridge_hidung": (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
-   - "tipe_nosepad": (Pilih: "Nosepad Fleksibel" atau "Fixed Bridge").
+  - "lebar_frame_ideal": (Pilih: "S (< 130 mm)", "M (130 - 139 mm)", atau "L (140 - 146 mm)").
+  - "lebar_bridge_hidung": (Pilih: "15 - 17 mm (Sempit)", "18 - 20 mm (Sedang)", atau "21 - 23 mm (Lebar)").
+  - "tipe_nosepad": (Pilih: "Nosepad Fleksibel" atau "Fixed Bridge").
 4. PILIHAN FRAME BINGKAI (SANGAT PENTING):
-   - Aturan penamaan: Kamu HARUS menggunakan format "Frame [Nama Tipe]".
-   - Contoh wajib: "Frame Oversized", "Frame Browline", "Frame Geometric", "Frame Wayfarer", "Frame Cateye", "Frame Kotak", "Frame Lonjong", "Frame Persegi Panjang", "Frame Bulat".
-   - DILARANG menambahkan kata sifat seperti "klasik", "sempit", atau "elegan" pada nama frame!
+  - Aturan penamaan: Kamu HARUS menggunakan format "Frame [Nama Tipe]".
+  - Contoh wajib: "Frame Oversized", "Frame Browline", "Frame Geometric", "Frame Wayfarer", "Frame Cateye", "Frame Kotak", "Frame Lonjong", "Frame Persegi Panjang", "Frame Bulat".
+  - DILARANG menambahkan kata sifat seperti "klasik", "sempit", atau "elegan" pada nama frame!
 
 Keluarkan HANYA JSON valid:
 {
